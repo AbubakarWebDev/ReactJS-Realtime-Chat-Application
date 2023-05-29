@@ -1,0 +1,64 @@
+.user {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  &.active {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .avatar {
+    position: relative;
+
+    img {
+      width: 50px;
+      height: 50px;
+    }
+
+    .active-indicator {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 12px;
+      height: 12px;
+      background-color: #4fc3f7;
+      border-radius: 50%;
+    }
+  }
+
+  .user-details {
+    flex: 1;
+    overflow: hidden;
+
+    .name {
+      font-size: 16px;
+      font-weight: 600;
+      width: 215px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .last-message-time {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.5);
+    }
+
+    .last-message-text {
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.5);
+    }
+  }
+}

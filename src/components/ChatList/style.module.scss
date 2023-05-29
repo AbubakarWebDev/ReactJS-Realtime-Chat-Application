@@ -1,0 +1,19 @@
+.chatListContainer {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 12px;
+    height: 100%;
+
+    .chatListHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+
+        h4 {
+            margin-bottom: 0;
+            font-family: "Roboto", serif;
+            font-weight: 600;
+        }
+    }
+}

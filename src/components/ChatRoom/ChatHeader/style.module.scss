@@ -1,0 +1,19 @@
+.chatHeaderContainer {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    background-color: #EFEFEF;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+
+    span {
+        font-size: 20px;
+        font-family: "Poppins", serif;
+        font-weight: bold;
+    }
+
+    button {
+        border: 1px solid rgba(163, 163, 163, 0.8);
+    }
+}
