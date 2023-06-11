@@ -1,21 +1,23 @@
-import axios from 'axios';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
+import { handleAPIError } from '../../services/api.service';
+import { register as registerUser } from "../../services/auth.service";
+
+const register = createAsyncThunk('auth/register', async (userData, thunkAPI) => {
+    try {
+        const response = await registerUser(userData, thunkAPI.signal);
+        return response.data;
+    }
+    catch (err) {
+        return thunkAPI.rejectWithValue(handleAPIError(err));
+    }
+});
+
 const initialState = {
-    user: null,
+    signupMessage: null,
     loading: false,
     error: null,
 };
-
-export const login = createAsyncThunk('auth/login', async (credentials) => {
-    const response = await axios.post('/api/login', credentials);
-    return response.data;
-});
-
-export const register = createAsyncThunk('auth/register', async (userData) => {
-    const response = await axios.post('/api/register', userData);
-    return response.data;
-});
 
 const authSlice = createSlice({
     name: 'auth',
@@ -23,31 +25,23 @@ const authSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(login.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(login.fulfilled, (state, action) => {
-                state.loading = false;
-                state.user = action.payload;
-            })
-            .addCase(login.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.error.message;
-            })
             .addCase(register.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
             .addCase(register.fulfilled, (state, action) => {
                 state.loading = false;
-                state.user = action.payload;
+                state.signupMessage = action.payload;
             })
             .addCase(register.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.message;
+                console.log(action);
+                state.error = action.payload;
             });
     },
 });
 
-export default authSlice.reducer;
+const authReducer = authSlice.reducer;
+const authActions = authSlice.actions;
+
+export { authReducer, register, authActions };

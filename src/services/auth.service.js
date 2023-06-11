@@ -1,11 +1,22 @@
 import Api from "./api.service";
+import { convertToMultipartFormData } from "../utils";
 
-const register = (formData) => {
-    return Api.post("/auth/register", formData);
+const register = (userData, signal) => {
+    const controller = new AbortController();
+    signal.addEventListener('abort', () => controller.abort());
+
+    const options = {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+        signal: controller.signal
+    };
+
+    const formData = convertToMultipartFormData(userData);
+
+    return Api.post("/auth/register", formData, options);
 };
 
-const AuthService = {
-    register,
-}
-
-export default AuthService;
+export {
+    register
+};

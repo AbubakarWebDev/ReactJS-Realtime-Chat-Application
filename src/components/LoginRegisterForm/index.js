@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
@@ -10,16 +10,22 @@ import styles from "./style.module.scss";
 const { loginRegister, title } = styles;
 
 function LoginRegisterForm() {
+    const [ activeKey, setActiveKey ] = useState("login");
+
     return (
         <div className={loginRegister}>
             <h3 className={title}>Chat Application</h3>
             
-            <Tabs defaultActiveKey="login">
+            <Tabs 
+                unmountOnExit={true} 
+                activeKey={activeKey} 
+                onSelect={(key) => setActiveKey(key)}
+            >
                 <Tab eventKey="login" title="login">
                     <LoginForm />
                 </Tab>
                 <Tab eventKey="register" title="Register">
-                    <SignupForm />
+                    <SignupForm changeTab={setActiveKey} />
                 </Tab>
             </Tabs>
         </div>
