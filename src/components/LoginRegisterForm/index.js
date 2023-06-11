@@ -7,15 +7,13 @@ import LoginForm from "../LoginForm";
 import SignupForm from "../SignupForm";
 
 import styles from "./style.module.scss";
-const { loginRegister, title } = styles;
+const { loginRegister } = styles;
 
 function LoginRegisterForm() {
     const [ activeKey, setActiveKey ] = useState("login");
 
     return (
-        <div className={loginRegister}>
-            <h3 className={title}>Chat Application</h3>
-            
+        <div className={loginRegister}>            
             <Tabs 
                 unmountOnExit={true} 
                 activeKey={activeKey} 

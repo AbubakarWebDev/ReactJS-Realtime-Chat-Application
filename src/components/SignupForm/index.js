@@ -5,53 +5,59 @@ import { useSelector, useDispatch } from "react-redux";
 
 import * as yup from 'yup';
 import { produce } from "immer";
-import { ClipLoader } from "react-spinners";
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { register as registerUser } from '../../store/slices/authSlice';
-import styles from "./style.module.scss";
+import RequestLoader from './../RequestLoader';
 
 const inpElem = [
     {
         id: 1,
-        name: "firstName",
         type: 'text',
+        name: "firstName",
+        label: "First Name",
         placeholder: "Enter first name",
     },
     {
         id: 2,
-        name: "lastName",
         type: 'text',
+        name: "lastName",
+        label: "Last Name",
         placeholder: "Enter last name",
     },
     {
         id: 3,
-        name: "username",
         type: 'text',
+        name: "username",
+        label: "Username",
         placeholder: "Enter Username",
     },
     {
         id: 4,
         name: "email",
         type: 'email',
+        label: "Email",
         placeholder: "Enter email",
     },
     {
         id: 5,
         name: "password",
+        label: "Password",
         type: 'password',
         placeholder: "Enter password",
     },
     {
         id: 6,
-        name: "confirmPassword",
         type: 'password',
+        name: "confirmPassword",
+        label: "Confirm Password",
         placeholder: "Confirm password",
     },
     {
         id: 7,
-        name: "avatar",
         type: "file",
+        name: "avatar",
+        label: "Profile Photo",
         placeholder: "Select a Profile Picture",
     }
 ];
@@ -82,9 +88,7 @@ const schema = yup.object().shape({
         })
 });
 
-function SignupForm({ changeTab }) {
-    const { signupForm, signupLoader } = styles;
-     
+function SignupForm({ changeTab }) {     
     const timeoutId = useRef(null);
     const controller = useRef({ abort: () => {} });
     const [showAlert, setShowAlert] = useState(false);
@@ -94,7 +98,7 @@ function SignupForm({ changeTab }) {
     });
 
     const dispatch = useDispatch();
-    const { loading, error, signupMessage } = useSelector((state) => state.auth);
+    const { loading, signupError: error, signupMessage } = useSelector((state) => state.auth);
 
     function onSubmit(data) {
         let userData = produce(data, (draft) => {
@@ -104,10 +108,10 @@ function SignupForm({ changeTab }) {
         const promise = dispatch(registerUser(userData));
         controller.current.abort = promise.abort;
 
-        promise.then(() => {
+        promise.unwrap().then(() => {
             setShowAlert(true);
             timeoutId.current = setTimeout(() => changeTab("login"), 3000);
-        })
+        });
     }
 
     useEffect(() => () => {
@@ -116,7 +120,7 @@ function SignupForm({ changeTab }) {
     }, []);
 
     return (
-        <form className={signupForm} onSubmit={handleSubmit(onSubmit)}>
+        <form className="position-relative" onSubmit={handleSubmit(onSubmit)}>
             {error && <Alert variant="danger"> <b> Error: {error.message} </b> </Alert>}
 
             {(signupMessage && showAlert) && (
@@ -126,27 +130,37 @@ function SignupForm({ changeTab }) {
             )}
 
             {inpElem.map(elem => (
-                <div key={elem.id} className="mb-3">
+                <div 
+                    key={elem.id} 
+                    className={`mb-3 ${elem.type !== "file" ? "form-floating" : ""}`}
+                >
+                    {(elem.type === "file") && (<label htmlFor={elem.name}> { elem.label } </label>)}
+
                     <input
+                        id={elem.name}
                         type={elem.type}
-                        className="form-control"
+                        className="form-control form-control-lg"
                         placeholder={elem.placeholder}
                         {...register(elem.name)}
                     />
-                    {errors[elem.name] && <b className="text-danger">{errors[elem.name].message}</b>}
+                    
+                    {(elem.type !== "file") && (<label htmlFor={elem.name}> { elem.label } </label>)}
+
+                    {errors[elem.name] && (
+                        <b className="text-danger d-block mt-1">{errors[elem.name].message}</b>
+                    )}
                 </div>
             ))}
 
-            <button type="submit" className="btn btn-primary" disabled={loading}>Submit</button>
+            <button 
+                type="submit" 
+                className="btn btn-lg btn-primary w-100 text-center" 
+                disabled={loading}
+            >
+                Create Account
+            </button>
 
-            {loading && <div className={signupLoader}>
-                <ClipLoader
-                    size={50}
-                    loading={true}
-                    color="#000000"
-                    cssOverride={{ borderWidth: "5px" }}
-                />
-            </div>}
+            {loading && <RequestLoader />}
         </form>
     );
 }

@@ -9,3 +9,36 @@ body {
   min-height: 100vh;
   font-family: "Roboto", "Poppins", sans-serif;
 }
+
+.form-container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 50px 0;
+}
+
+.form-container .form {
+  max-width: 500px;
+  width: 100%;
+  padding: 14px;
+  background-color: #fff;
+}
+
+.form-container .form h3 {
+  font-family: "Roboto", serif;
+  text-align: center;
+  color: #454545;
+  font-weight: 900;
+}
+
+.form-container .form p {
+  font-family: "Roboto", serif;
+  font-size: 16px;
+  text-align: center;
+}
+
+.form-container .form p a {
+  text-decoration: none;
+}
