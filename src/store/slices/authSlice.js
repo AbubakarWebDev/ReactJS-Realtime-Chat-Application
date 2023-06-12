@@ -29,16 +29,15 @@ const login = createAsyncThunk('auth/login', async (userData, thunkAPI) => {
 
 const initialState = {
     signupMessage: null,
+    token: null,
     loading: false,
     signupError: null,
     loginError: null,
-    token: null,
 };
 
 const authSlice = createSlice({
     name: 'auth',
     initialState,
-    reducers: {},
     extraReducers: (builder) => {
         builder
             // Register Reducers

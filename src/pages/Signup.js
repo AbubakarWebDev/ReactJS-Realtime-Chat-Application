@@ -1,23 +1,21 @@
-import React from 'react'
+import React from 'react';
 import { Link } from "react-router-dom";
 
 import SignupForm from "../components/SignupForm";
+import FormLayout from '../layouts/FormLayout';
 
-function Signup() {
-  return (
-    <div className='form-container'>
-        <div className="form">
-            <h3 className="mb-3 mt-1">Register Your Account</h3>
-            
-            <SignupForm />
-
-            <p className="mt-3 mb-1">
-                <span>Already Have An Account?</span>
-                <Link to="/login"> Login Here </Link>
-            </p>
-        </div>
-    </div>
-  )
+const options = {
+  title: "Login Your Account",
+  footer: (
+    <>
+      <span>Already Have An Account?</span>
+      <Link to="/login"> Login Here </Link>
+    </>
+  ),
 }
 
-export default Signup;
+function Signup() {
+  return <SignupForm />
+}
+
+export default FormLayout(Signup, options);

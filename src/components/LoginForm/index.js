@@ -1,6 +1,7 @@
 import Alert from 'react-bootstrap/Alert';
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
 
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
@@ -32,6 +33,8 @@ const schema = yup.object().shape({
 });
 
 function LoginForm() {
+    const navigate = useNavigate();
+    const timeoutId = useRef(null);
     const controller = useRef({ abort: () => {} });
     const [showAlert, setShowAlert] = useState(false);
 
@@ -46,10 +49,16 @@ function LoginForm() {
         const promise = dispatch(login(data));
         controller.current.abort = promise.abort;
 
-        promise.unwrap().then(() => setShowAlert(true));
+        promise.unwrap().then(() => {
+            setShowAlert(true);
+            timeoutId.current = setTimeout(() => navigate('/'), 3000);
+        });
     };
 
-    useEffect(() => () => controller.current.abort(), []);
+    useEffect(() => () => {
+        controller.current.abort();
+        clearTimeout(timeoutId.current);
+    }, []);
 
     return (
         <form className="position-relative" onSubmit={handleSubmit(onSubmit)}>
@@ -81,11 +90,19 @@ function LoginForm() {
 
             <button 
                 type="submit" 
-                className="btn btn-lg btn-primary w-100 text-center" 
                 disabled={loading}
+                className="btn btn-md btn-primary w-100 text-center" 
             >
                 Login Account
             </button>
+
+            <Link 
+                disabled={loading}
+                to="/forgot-password"
+                className="btn btn-md btn-primary w-100 mt-2 text-center" 
+            >
+                Forgot Password
+            </Link>
 
             {loading && <RequestLoader />}
         </form>

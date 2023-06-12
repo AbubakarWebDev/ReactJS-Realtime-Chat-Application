@@ -10,28 +10,25 @@ export default axios.create({
 });
 
 function handleAPIError(err) {
-  const error = {
+  if (err instanceof AxiosError && err.response) {
+    const response = err.response.data;
+
+    if (isValidJson(response)) {
+      if ([400, 422].includes(response.code)) {
+        return response;
+      } 
+      
+      else if (response.code === 401) {
+        localStorage.removeItem('token');
+        return response;
+      }
+    }
+  }
+
+  return {
     code: 500,
     message: "Something went wrong. Please try again Later!"
   };
-
-  if (err instanceof AxiosError) {
-    if (err.response) {
-      if (isValidJson(err.response.data)) {
-        const response = err.response.data;
-
-        if ([400, 422].includes(response.code)) {
-          return response;
-        }
-      }
-
-      return error;
-    }
-
-    return error;
-  }
-
-  return error;
 }
 
 export {

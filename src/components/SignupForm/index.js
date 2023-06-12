@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import Alert from 'react-bootstrap/Alert';
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import * as yup from 'yup';
 import { produce } from "immer";
@@ -88,8 +89,9 @@ const schema = yup.object().shape({
         })
 });
 
-function SignupForm({ changeTab }) {     
+function SignupForm() {     
     const timeoutId = useRef(null);
+    const navigate = useNavigate();
     const controller = useRef({ abort: () => {} });
     const [showAlert, setShowAlert] = useState(false);
 
@@ -110,7 +112,7 @@ function SignupForm({ changeTab }) {
 
         promise.unwrap().then(() => {
             setShowAlert(true);
-            timeoutId.current = setTimeout(() => changeTab("login"), 3000);
+            timeoutId.current = setTimeout(() => navigate('/login'), 3000);
         });
     }
 

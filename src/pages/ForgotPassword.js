@@ -1,9 +1,14 @@
-import React from 'react'
+import React from 'react';
 
-function ForgotPassword() {
-  return (
-    <div>ForgotPassword</div>
-  )
+import ForgotPasswordForm from "../components/ForgotPasswordForm";
+import FormLayout from '../layouts/FormLayout';
+
+const options = {
+  title: "Find Your Account",
 }
 
-export default ForgotPassword
+function ForgotPassword() {
+  return <ForgotPasswordForm />
+}
+
+export default FormLayout(ForgotPassword, options);

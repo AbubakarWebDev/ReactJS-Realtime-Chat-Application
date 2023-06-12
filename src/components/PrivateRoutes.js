@@ -1,11 +1,20 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
+import { useSelector } from "react-redux";
 
-function PrivateRoutes() {
-  let auth = { 'token': true };
+import Loader from "./Loader";
 
-  return (
-    auth.token ? <Outlet /> : <Navigate to='/login' />
+function PrivateRoutes({ protect }) {
+  const { loading, error, user } = useSelector((state) => state.user);
+
+  if (protect) {
+    return loading ? <Loader />  : (
+      (!error && user) ? <Navigate to='/' /> : <Outlet />
+    );
+  }
+
+  return loading ? <Loader />  : (
+    (!error && user) ? <Outlet /> : <Navigate to='/login' />
   );
 }
 
