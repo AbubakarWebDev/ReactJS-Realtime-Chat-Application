@@ -1,21 +1,14 @@
 import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
-import { useSelector } from "react-redux";
-
-import Loader from "./Loader";
+import { Navigate, Outlet, useLoaderData } from 'react-router-dom';
 
 function PrivateRoutes({ protect }) {
-  const { loading, error, user } = useSelector((state) => state.user);
+  const isUserLoggedIn = useLoaderData();
 
   if (protect) {
-    return loading ? <Loader />  : (
-      (!error && user) ? <Navigate to='/' /> : <Outlet />
-    );
+    return isUserLoggedIn ? <Navigate to='/' /> : <Outlet />
   }
 
-  return loading ? <Loader />  : (
-    (!error && user) ? <Outlet /> : <Navigate to='/login' />
-  );
+  return isUserLoggedIn ? <Outlet /> : <Navigate to='/login' />
 }
 
-export default PrivateRoutes;
+export default React.memo(PrivateRoutes);

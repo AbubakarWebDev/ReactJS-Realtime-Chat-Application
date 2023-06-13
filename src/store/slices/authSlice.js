@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 import { handleAPIError } from '../../services/api.service';
-import { 
-    register as registerUser, 
-    login as loginUser 
+import {
+    register as registerUser,
+    login as loginUser
 } from "../../services/auth.service";
 
 const register = createAsyncThunk('auth/register', async (userData, thunkAPI) => {
@@ -38,6 +38,12 @@ const initialState = {
 const authSlice = createSlice({
     name: 'auth',
     initialState,
+    reducers: {
+        logout: function (state) {
+            state.token = null;
+            localStorage.removeItem("token");
+        }
+    },
     extraReducers: (builder) => {
         builder
             // Register Reducers
@@ -67,12 +73,12 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.loginError = null;
                 state.token = action.payload.result.token
+
                 localStorage.setItem('token', action.payload.result.token);
             })
             .addCase(login.rejected, (state, action) => {
                 state.loading = false;
                 state.loginError = action.payload;
-                console.log(action);
                 state.token = null;
             });
     },

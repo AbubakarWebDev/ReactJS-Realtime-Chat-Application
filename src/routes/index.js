@@ -8,17 +8,11 @@ import ResetPassword from '../pages/ResetPassword';
 import ForgotPassword from '../pages/ForgotPassword';
 import PrivateRoutes from '../components/PrivateRoutes';
 
+import privateRoutesLoader from "./privateRoutesLoader";
+
 const router = createBrowserRouter([
   {
-    element: <PrivateRoutes />,
-    children: [
-      {
-        path: "/",
-        element: <Home />,
-      },
-    ],
-  },
-  {
+    loader: privateRoutesLoader,
     element: <PrivateRoutes protect={true} />,
     children: [
       {
@@ -32,6 +26,16 @@ const router = createBrowserRouter([
       {
         path: "/forgot-password",
         element: <ForgotPassword />,
+      },
+    ],
+  },
+  {
+    loader: privateRoutesLoader,
+    element: <PrivateRoutes protect={false} />,
+    children: [
+      {
+        path: "/",
+        element: <Home />,
       },
     ],
   },

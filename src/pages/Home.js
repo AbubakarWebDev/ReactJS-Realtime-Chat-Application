@@ -7,6 +7,8 @@ import SearchUserSidebar from '../components/SearchUserSidebar';
 function Home() {
   const avatarUrl = "https://ui-avatars.com/api/?bold=true&size=40&background=random&name=M+A";
 
+  console.log("home");
+
   return (
     <>
       <Header avatarUrl={avatarUrl} />
