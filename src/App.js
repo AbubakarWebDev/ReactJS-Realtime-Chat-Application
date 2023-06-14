@@ -1,9 +1,7 @@
 import React, { useEffect } from 'react';
-import { RouterProvider, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { Outlet, useNavigate } from "react-router-dom";
 
-import router from './routes';
-import Loader from './components/Loader';
 import { authActions } from './store/slices/authSlice';
 import { getLoggedInUser } from './store/slices/userSlice';
 
@@ -36,12 +34,7 @@ function App() {
         }
     }, []);
 
-    return (
-        <RouterProvider
-            router={router}
-            fallbackElement={<Loader />}
-        />
-    );
+    return <Outlet />;
 }
 
 export default App;

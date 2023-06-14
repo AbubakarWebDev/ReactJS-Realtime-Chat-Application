@@ -8,7 +8,7 @@ import * as yup from 'yup';
 import { produce } from "immer";
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { register as registerUser } from '../../store/slices/authSlice';
+import { register as registerUser, authActions } from '../../store/slices/authSlice';
 import RequestLoader from './../RequestLoader';
 
 const inpElem = [
@@ -91,8 +91,9 @@ const schema = yup.object().shape({
 
 function SignupForm() {     
     const timeoutId = useRef(null);
-    const navigate = useNavigate();
     const controller = useRef({ abort: () => {} });
+    
+    const navigate = useNavigate();
     const [showAlert, setShowAlert] = useState(false);
 
     const { register, handleSubmit, formState: { errors } } = useForm({
@@ -100,7 +101,7 @@ function SignupForm() {
     });
 
     const dispatch = useDispatch();
-    const { loading, signupError: error, signupMessage } = useSelector((state) => state.auth);
+    const { loading, error, isRegistered } = useSelector((state) => state.auth);
 
     function onSubmit(data) {
         let userData = produce(data, (draft) => {
@@ -116,16 +117,20 @@ function SignupForm() {
         });
     }
 
-    useEffect(() => () => {
-        controller.current.abort();
-        clearTimeout(timeoutId.current);
+    useEffect(() => {
+        dispatch(authActions.setError(null));
+
+        return () => {
+            controller.current.abort();
+            clearTimeout(timeoutId.current);
+        }
     }, []);
 
     return (
         <form className="position-relative" onSubmit={handleSubmit(onSubmit)}>
             {error && <Alert variant="danger"> <b> Error: {error.message} </b> </Alert>}
 
-            {(signupMessage && showAlert) && (
+            {(isRegistered && showAlert) && (
                 <Alert variant="warning" onClose={() => setShowAlert(false)} dismissible>
                     <b> Your Account has been Registered Successfully. Please login to your Account </b>
                 </Alert>

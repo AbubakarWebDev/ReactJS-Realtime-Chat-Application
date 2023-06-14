@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import RequestLoader from './../RequestLoader';
-import { login } from '../../store/slices/authSlice';
+import { login, authActions } from '../../store/slices/authSlice';
 
 const inpElem = [
     {
@@ -43,7 +43,7 @@ function LoginForm() {
     });
 
     const dispatch = useDispatch();
-    const { loading, loginError: error, token } = useSelector((state) => state.auth);
+    const { loading, error, token } = useSelector((state) => state.auth);
 
     const onSubmit = (data) => {
         const promise = dispatch(login(data));
@@ -51,13 +51,17 @@ function LoginForm() {
 
         promise.unwrap().then(() => {
             setShowAlert(true);
-            timeoutId.current = setTimeout(() => { navigate('/') }, 3000);
+            timeoutId.current = setTimeout(() => { navigate('/', { replace: true }) }, 3000);
         });
     };
 
-    useEffect(() => () => {
-        controller.current.abort();
-        clearTimeout(timeoutId.current);
+    useEffect(() => {
+        dispatch(authActions.setError(null));
+
+        return () => {
+            controller.current.abort();
+            clearTimeout(timeoutId.current);
+        }
     }, []);
 
     return (

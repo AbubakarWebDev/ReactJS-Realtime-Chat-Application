@@ -11,9 +11,21 @@ const currentUser = (token, signal) => {
         signal: controller.signal
     };
 
-    return Api.get("/auth/loggedin-user", options);
+    return Api.get("/users/loggedin", options);
+};
+
+const userExist = (id, signal) => {
+    const controller = new AbortController();
+    signal.addEventListener('abort', () => controller.abort());
+
+    const options = {
+        signal: controller.signal
+    };
+
+    return Api.get(`/users/${id}`, options);
 };
 
 export {
-    currentUser
+    currentUser,
+    userExist
 };

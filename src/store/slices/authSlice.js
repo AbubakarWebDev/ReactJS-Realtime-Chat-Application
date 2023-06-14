@@ -3,7 +3,9 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { handleAPIError } from '../../services/api.service';
 import {
     register as registerUser,
-    login as loginUser
+    login as loginUser,
+    forgotPassword as forgot,
+    resetPassword as reset,
 } from "../../services/auth.service";
 
 const register = createAsyncThunk('auth/register', async (userData, thunkAPI) => {
@@ -22,17 +24,37 @@ const login = createAsyncThunk('auth/login', async (userData, thunkAPI) => {
         return response.data;
     }
     catch (err) {
-        console.log(err);
+        return thunkAPI.rejectWithValue(handleAPIError(err));
+    }
+});
+
+const forgotPassword = createAsyncThunk('auth/forgotPassword', async (userData, thunkAPI) => {
+    try {
+        const response = await forgot(userData, thunkAPI.signal);
+        return response.data;
+    }
+    catch (err) {
+        return thunkAPI.rejectWithValue(handleAPIError(err));
+    }
+});
+
+const resetPassword = createAsyncThunk('auth/resetPassword', async (userData, thunkAPI) => {
+    try {
+        const response = await reset(userData, thunkAPI.signal);
+        return response.data;
+    }
+    catch (err) {
         return thunkAPI.rejectWithValue(handleAPIError(err));
     }
 });
 
 const initialState = {
-    signupMessage: null,
-    token: null,
+    error: null,
     loading: false,
-    signupError: null,
-    loginError: null,
+    token: null,
+    isRegistered: null,
+    isEmailSent: null,
+    isPasswordReset: null,
 };
 
 const authSlice = createSlice({
@@ -42,44 +64,81 @@ const authSlice = createSlice({
         logout: function (state) {
             state.token = null;
             localStorage.removeItem("token");
+        },
+        setError: function (state, action) {
+            state.error = action.payload;
         }
     },
     extraReducers: (builder) => {
         builder
             // Register Reducers
             .addCase(register.pending, (state) => {
+                state.error = null;
                 state.loading = true;
-                state.signupError = null;
-                state.signupMessage = null;
+                state.isRegistered = null;
             })
             .addCase(register.fulfilled, (state, action) => {
+                state.error = null;
                 state.loading = false;
-                state.signupMessage = action.payload;
-                state.signupError = null;
+                state.isRegistered = true;
             })
             .addCase(register.rejected, (state, action) => {
                 state.loading = false;
-                state.signupError = action.payload;
-                state.signupMessage = null;
+                state.isRegistered = null;
+                state.error = action.payload;
             })
 
             // Login Reducers
             .addCase(login.pending, (state) => {
-                state.loading = true;
-                state.loginError = null;
+                state.error = null;
                 state.token = null;
+                state.loading = true;
             })
             .addCase(login.fulfilled, (state, action) => {
+                state.error = null;
                 state.loading = false;
-                state.loginError = null;
                 state.token = action.payload.result.token
 
                 localStorage.setItem('token', action.payload.result.token);
             })
             .addCase(login.rejected, (state, action) => {
-                state.loading = false;
-                state.loginError = action.payload;
                 state.token = null;
+                state.loading = false;
+                state.error = action.payload;
+            })
+
+            // Forgot Password Reducers
+            .addCase(forgotPassword.pending, (state) => {
+                state.error = null;
+                state.loading = true;
+                state.isEmailSent = null;
+            })
+            .addCase(forgotPassword.fulfilled, (state) => {
+                state.error = null;
+                state.loading = false;
+                state.isEmailSent = true;
+            })
+            .addCase(forgotPassword.rejected, (state, action) => {
+                state.loading = false;
+                state.isEmailSent = null;
+                state.error = action.payload;
+            })
+
+            // Reset Password Reducers
+            .addCase(resetPassword.pending, (state) => {
+                state.error = null;
+                state.loading = true;
+                state.isPasswordReset = null;
+            })
+            .addCase(resetPassword.fulfilled, (state) => {
+                state.error = null;
+                state.loading = false;
+                state.isPasswordReset = true;
+            })
+            .addCase(resetPassword.rejected, (state, action) => {
+                state.loading = false;
+                state.isPasswordReset = null;
+                state.error = action.payload;
             });
     },
 });
@@ -87,4 +146,4 @@ const authSlice = createSlice({
 const authReducer = authSlice.reducer;
 const authActions = authSlice.actions;
 
-export { authReducer, register, login, authActions };
+export { authReducer, register, login, forgotPassword, resetPassword, authActions };

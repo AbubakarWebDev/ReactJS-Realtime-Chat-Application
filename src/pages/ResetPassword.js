@@ -1,9 +1,14 @@
-import React from 'react'
+import React from 'react';
 
-function ResetPassword() {
-  return (
-    <div>ResetPassword</div>
-  )
+import ResetPasswordForm from "../components/ResetPasswordForm";
+import FormLayout from '../layouts/FormLayout';
+
+const options = {
+  title: "Reset Your Password",
 }
 
-export default ResetPassword
+function ResetPassword() {
+  return <ResetPasswordForm />
+}
+
+export default FormLayout(ResetPassword, options);

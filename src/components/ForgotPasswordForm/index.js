@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import RequestLoader from './../RequestLoader';
-import { login } from '../../store/slices/authSlice';
+import { forgotPassword, authActions } from '../../store/slices/authSlice';
 
 const inpElem = [
   {
@@ -23,7 +23,7 @@ const schema = yup.object().shape({
   email: yup.string().required('This field is required').email('Please enter a valid email address'),
 });
 
-function LoginForm() {
+function ForgotPasswordForm() {
   const controller = useRef({ abort: () => { } });
   const [showAlert, setShowAlert] = useState(false);
 
@@ -32,10 +32,10 @@ function LoginForm() {
   });
 
   const dispatch = useDispatch();
-  const { loading, loginError: error, token } = useSelector((state) => state.auth);
+  const { loading, error, isEmailSent } = useSelector((state) => state.auth);
 
   const onSubmit = (data) => {
-    const promise = dispatch(login(data));
+    const promise = dispatch(forgotPassword(data));
     controller.current.abort = promise.abort;
 
     promise.unwrap().then(() => {
@@ -43,13 +43,16 @@ function LoginForm() {
     });
   };
 
-  useEffect(() => () => { controller.current.abort() }, []);
+  useEffect(() => {
+    dispatch(authActions.setError(null));
+    return () => controller.current.abort();
+  }, []);
 
   return (
     <form className="position-relative" onSubmit={handleSubmit(onSubmit)}>
       {error && <Alert variant="danger"> <b> Error: {error.message} </b> </Alert>}
 
-      {(token && showAlert) && (
+      {(isEmailSent && showAlert) && (
         <Alert variant="warning" onClose={() => setShowAlert(false)} dismissible>
           <b> Please check your email for password reset! </b>
         </Alert>
@@ -86,4 +89,4 @@ function LoginForm() {
   );
 }
 
-export default LoginForm;
+export default ForgotPasswordForm;

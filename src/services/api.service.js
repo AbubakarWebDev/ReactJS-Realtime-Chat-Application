@@ -14,7 +14,7 @@ function handleAPIError(err) {
     const response = err.response.data;
 
     if (isValidJson(response)) {
-      if ([400, 422].includes(response.code)) {
+      if ([400, 422, 404].includes(response.code)) {
         return response;
       } 
       

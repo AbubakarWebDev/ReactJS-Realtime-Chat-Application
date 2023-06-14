@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 
+import App from "../App";
 import Home from "../pages/Home";
 import Login from '../pages/Login';
 import Signup from '../pages/Signup';
@@ -12,40 +13,46 @@ import privateRoutesLoader from "./privateRoutesLoader";
 
 const router = createBrowserRouter([
   {
-    loader: privateRoutesLoader,
-    element: <PrivateRoutes protect={true} />,
+    path: "/",
+    element: <App />,
     children: [
       {
-        path: "/login",
-        element: <Login />,
+        loader: privateRoutesLoader,
+        element: <PrivateRoutes protect={true} />,
+        children: [
+          {
+            path: "/login",
+            element: <Login />,
+          },
+          {
+            path: "/signup",
+            element: <Signup />,
+          },
+          {
+            path: "/forgot-password",
+            element: <ForgotPassword />,
+          },
+        ],
       },
       {
-        path: "/signup",
-        element: <Signup />,
+        loader: privateRoutesLoader,
+        element: <PrivateRoutes protect={false} />,
+        children: [
+          {
+            path: "/",
+            element: <Home />,
+          },
+        ],
       },
       {
-        path: "/forgot-password",
-        element: <ForgotPassword />,
+        path: "/reset-password/:userId/:token",
+        element: <ResetPassword />,
       },
-    ],
-  },
-  {
-    loader: privateRoutesLoader,
-    element: <PrivateRoutes protect={false} />,
-    children: [
       {
-        path: "/",
-        element: <Home />,
-      },
-    ],
-  },
-  {
-    path: "/reset-password/:userId/:token",
-    element: <ResetPassword />,
-  },
-  {
-    path: "*",
-    element: <Error404 />,
+        path: "*",
+        element: <Error404 />,
+      }
+    ]
   }
 ]);
 

@@ -1,7 +1,7 @@
 import { store } from '../store';
 import { getLoggedInUser } from '../store/slices/userSlice';
 
-async function loader() {
+async function PrivateRoutesLoader() {
     const token = localStorage.getItem('token');
 
     if (token) {
@@ -17,4 +17,4 @@ async function loader() {
     return false;
 }
 
-export default loader;
+export default PrivateRoutesLoader;

@@ -1,18 +1,23 @@
-import ReactDOM from 'react-dom/client';
 import React from 'react';
-import { Provider as ReduxProvider } from 'react-redux';
+import ReactDOM from 'react-dom/client';
+import { RouterProvider } from "react-router-dom";
+import { Provider } from 'react-redux'
 
-import { store } from './store';
-import App from './App';
+import router from './routes';
+import { store } from './store'
+import Loader from './components/Loader';
 
-import "./styles/globals.scss";
+import "./styles/globals.scss"
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <React.StrictMode>
-    <ReduxProvider store={store}>
-      <App />
-    </ReduxProvider>
+    <Provider store={store}>
+      <RouterProvider
+        router={router}
+        fallbackElement={<Loader />}
+      />
+    </Provider>
   </React.StrictMode>
 );
