@@ -1,25 +1,26 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Link } from "react-router-dom";
-import { NavDropdown } from 'react-bootstrap';
 import { FaSearch } from "react-icons/fa";
+import { NavDropdown } from 'react-bootstrap';
 
 import { homePageActions } from '../../store/slices/homePageSlice'
+import { authActions } from '../../store/slices/authSlice'
 
 import styles from "./style.module.scss";
+const { avatarImg, navbar } = styles;
 
-function Header({ avatarUrl }) {
+function Header() {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { avatarImg, navbar } = styles;
+    const user = useSelector((state) => state.user.user);
 
-    const userProfile = (
-        <img
-            src={avatarUrl}
-            alt="User Profile"
-            className={`rounded-circle mr-2 ${avatarImg}`}
-        />
-    );
+    function handleLogout() {
+        dispatch(authActions.logout());
+        navigate('/login', { replace: true });
+    }
 
     return (
         <>
@@ -35,9 +36,21 @@ function Header({ avatarUrl }) {
 
                     <Link className="text-decoration-none text-dark fs-4 fw-bold" to="/" >Chat Me Up</Link>
 
-                    <NavDropdown title={userProfile} id="user-dropdown">
-                        <NavDropdown.Item href="#action/1">Profile</NavDropdown.Item>
-                        <NavDropdown.Item href="#action/3">Logout</NavDropdown.Item>
+                    <NavDropdown 
+                        id="user-dropdown"
+                        title={
+                            <img
+                                alt="User Profile"
+                                className={`rounded-circle mr-2 ${avatarImg}`}
+                                src={`${process.env.REACT_APP_SERVER_BASE_URL}/${user.avatar}`}
+                            />
+                        }
+                    >
+                        <Link to="/profile" className='text-decoration-none'> 
+                            <NavDropdown.Item as="div">Profile</NavDropdown.Item> 
+                        </Link>
+
+                        <NavDropdown.Item as="button" onClick={handleLogout}>Logout</NavDropdown.Item>
                     </NavDropdown>
                 </div>
             </nav>

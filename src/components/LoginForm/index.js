@@ -51,7 +51,7 @@ function LoginForm() {
 
         promise.unwrap().then(() => {
             setShowAlert(true);
-            timeoutId.current = setTimeout(() => { navigate('/', { replace: true }) }, 3000);
+            timeoutId.current = setTimeout(() => { navigate('/', { replace: true }) }, 1500);
         });
     };
 

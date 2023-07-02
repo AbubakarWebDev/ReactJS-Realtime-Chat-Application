@@ -1,12 +1,34 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { HiPlusCircle } from 'react-icons/hi';
+import { useSelector, useDispatch } from "react-redux";
 
 import ChatListItem from "./ChatListItem";
+import RequestLoader from './../RequestLoader';
+import { getAllChats, chatActions } from '../../store/slices/chatSlice';
 
 import styles from "./style.module.scss";
+import { getSender, capatalize, elipsis, convertTo12HourFormat } from '../../utils';
+const { chatListContainer, chatListHeader } = styles;
 
 function ChatList() {
-  const { chatListContainer, chatListHeader } = styles;
+  const dispatch = useDispatch();
+  const controller = useRef({ abort: () => {} });
+
+  const user = useSelector((state) => state.user.user);
+  const { loading, error, chats, activeChat } = useSelector((state) => state.chat);
+
+  useEffect(() => {
+    const promise = dispatch(getAllChats());
+    controller.current.abort = promise.abort;
+
+    return () => { 
+      controller.current.abort();
+    }
+  }, []);
+
+  function handleGroupClick() {
+    
+  }
 
   return (
     <div className={chatListContainer}>
@@ -14,24 +36,39 @@ function ChatList() {
         <h4>My Chats</h4>
 
         <button type="button" className="btn btn-light btn-outline-dark d-flex align-items-center">
-          <span className="me-2">New Group Chat</span>
+          <span className="me-2" onClick={handleGroupClick}>New Group Chat</span>
           <HiPlusCircle />
         </button>
       </div>
 
-      <ChatListItem
-        name="John Doe wejfkewhfkwjkfhwe fwkfhwkef kwjeh"
-        avatarUrl="https://ui-avatars.com/api/?bold=true&size=150&background=random&name=KA"
-        lastMsgText="Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet"
-        lastMsgTime="10:31 AM"
-      />
+      {(loading || error) ? (
+        <RequestLoader />
+      ) : chats ? (
+        <div className="chatList">
+          {chats.map(chat => {
+            const sender = getSender(user, chat.users);
+            const chatName = `${capatalize(sender.firstName)} ${capatalize(sender.lastName)}`;
+            const lastMsgText = sender.latestMessage && elipsis(sender.latestMessage.content);
+            const lastMsgTime = sender.latestMessage && convertTo12HourFormat(sender.latestMessage.createdAt);
 
-      <ChatListItem
-        name="John Doe"
-        avatarUrl="https://ui-avatars.com/api/?bold=true&size=150&background=random&name=ML"
-        lastMsgText="Lorem ipsum dolor sit amet"
-        lastMsgTime="10:31 AM"
-      />
+            return (
+              <ChatListItem
+                key={chat._id}
+                lastMsgText={lastMsgText}
+                lastMsgTime={lastMsgTime}
+                name={chat.isGroupChat ? chat.chatName : chatName}
+                isActive={chat._id === (activeChat && activeChat._id)}
+                handleClick={() => dispatch(chatActions.setActiveChat(chat))}
+                avatarUrl={`${process.env.REACT_APP_SERVER_BASE_URL}/${sender.avatar}`}
+              />
+            );
+          })}
+        </div>
+      ) : (
+        <div className="text-center mt-5 fs-3">
+          <b>No Chats Found</b>
+        </div>
+      )}
     </div>
   );
 }

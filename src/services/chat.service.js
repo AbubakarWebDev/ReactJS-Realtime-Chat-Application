@@ -1,33 +1,6 @@
 import Api from "./api.service";
 
-const currentUser = (signal) => {
-    const token = localStorage.getItem("token");
-
-    const controller = new AbortController();
-    signal.addEventListener('abort', () => controller.abort());
-
-    const options = {
-        headers: {
-            'Authorization': `Bearer ${token}`,
-        },
-        signal: controller.signal
-    };
-
-    return Api.get("/users/loggedin", options);
-};
-
-const userExist = (id, signal) => {
-    const controller = new AbortController();
-    signal.addEventListener('abort', () => controller.abort());
-
-    const options = {
-        signal: controller.signal
-    };
-
-    return Api.get(`/users/${id}`, options);
-};
-
-const getAllUsers = (search, signal) => {
+const getAllChats = (signal) => {
     const token = localStorage.getItem('token');
 
     const controller = new AbortController();
@@ -40,11 +13,26 @@ const getAllUsers = (search, signal) => {
         signal: controller.signal
     };
 
-    return Api.get(`/users?search=${search}`, options);
+    return Api.get("/chats", options);
+};
+
+const getorCreateChats = (payload, signal) => {
+    const token = localStorage.getItem('token');
+
+    const controller = new AbortController();
+    signal.addEventListener('abort', () => controller.abort());
+
+    const options = {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+        signal: controller.signal
+    };
+
+    return Api.post("/chats", payload, options);
 }
 
 export {
-    currentUser,
-    userExist,
-    getAllUsers
+    getAllChats,
+    getorCreateChats
 };

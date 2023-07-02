@@ -10,6 +10,9 @@ export default axios.create({
 });
 
 function handleAPIError(err) {
+
+  console.log(err);
+
   if (err instanceof AxiosError && err.response) {
     const response = err.response.data;
 

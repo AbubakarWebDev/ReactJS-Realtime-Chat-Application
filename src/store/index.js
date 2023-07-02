@@ -1,15 +1,16 @@
 import { configureStore } from '@reduxjs/toolkit';
 
+import { authReducer } from './slices/authSlice';
+import { userReducer } from './slices/userSlice';
+import { chatReducer } from './slices/chatSlice';
 import { homePageReducer } from './slices/homePageSlice';
-import { authReducer, authActions } from './slices/authSlice';
-import { userReducer, getLoggedInUser } from './slices/userSlice';
-import { Location } from 'react-router-dom';
 
 const store = configureStore({
     reducer: {
         homePage: homePageReducer,
         auth: authReducer,
-        user: userReducer
+        user: userReducer,
+        chat: chatReducer
     },
     middleware: (getDefaultMiddleware) => [...getDefaultMiddleware()],
     devTools: process.env.NODE_ENV !== 'production',

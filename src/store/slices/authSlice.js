@@ -50,10 +50,10 @@ const resetPassword = createAsyncThunk('auth/resetPassword', async (userData, th
 
 const initialState = {
     error: null,
-    loading: false,
     token: null,
-    isRegistered: null,
+    loading: false,
     isEmailSent: null,
+    isRegistered: null,
     isPasswordReset: null,
 };
 
@@ -71,7 +71,7 @@ const authSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            // Register Reducers
+            // reducer for register action
             .addCase(register.pending, (state) => {
                 state.error = null;
                 state.loading = true;
@@ -88,7 +88,7 @@ const authSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // Login Reducers
+            // reducer for Login action
             .addCase(login.pending, (state) => {
                 state.error = null;
                 state.token = null;
@@ -107,7 +107,7 @@ const authSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // Forgot Password Reducers
+            // reducer for forgotPassword action
             .addCase(forgotPassword.pending, (state) => {
                 state.error = null;
                 state.loading = true;
@@ -124,7 +124,7 @@ const authSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // Reset Password Reducers
+            // reducer for resetPassword action
             .addCase(resetPassword.pending, (state) => {
                 state.error = null;
                 state.loading = true;

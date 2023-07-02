@@ -2,11 +2,11 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 import { authActions } from "./authSlice";
 import { handleAPIError } from '../../services/api.service';
-import { currentUser, userExist } from "../../services/user.service";
+import { currentUser, userExist, getAllUsers as getUsers } from "../../services/user.service";
 
-const getLoggedInUser = createAsyncThunk('user/getLoggedInUser', async (token, thunkAPI) => {
+const getLoggedInUser = createAsyncThunk('user/getLoggedInUser', async (arg, thunkAPI) => {
     try {
-        const response = await currentUser(token, thunkAPI.signal);
+        const response = await currentUser(thunkAPI.signal);
         return response.data.result.user;
     }
     catch (err) {
@@ -24,8 +24,19 @@ const checkUserExist = createAsyncThunk('user/checkUserExist', async (id, thunkA
     }
 });
 
+const getAllUsers = createAsyncThunk('user/getAllUsers', async (search, thunkAPI) => {
+    try {
+        const response = await getUsers(search, thunkAPI.signal);
+        return response.data.result.users;
+    }
+    catch (err) {
+        return thunkAPI.rejectWithValue(handleAPIError(err));
+    }
+});
+
 const initialState = {
     user: null,
+    users: null,
     error: null,
     loading: false,
     isUserExist: null,
@@ -41,6 +52,7 @@ const userSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            // reducers for getLoggedInUser action
             .addCase(getLoggedInUser.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -57,6 +69,7 @@ const userSlice = createSlice({
                 state.user = null;
             })
 
+            // reducers for checkUserExist action
             .addCase(checkUserExist.pending, (state) => {
                 state.error = null;
                 state.loading = true;
@@ -73,6 +86,23 @@ const userSlice = createSlice({
                 state.error = action.payload;
             })
 
+            // reducers for getAllUsers action
+            .addCase(getAllUsers.pending, (state) => {
+                state.error = null;
+                state.loading = true;
+                state.users = null;
+            })
+            .addCase(getAllUsers.fulfilled, (state, action) => {
+                state.error = null;
+                state.loading = false;
+                state.users = action.payload;
+            })
+            .addCase(getAllUsers.rejected, (state, action) => {
+                state.loading = false;
+                state.users = null;
+                state.error = action.payload;
+            })
+
             // reducer for logout action
             .addCase(authActions.logout, (state, action) => {
                 state.user = null;
@@ -83,4 +113,4 @@ const userSlice = createSlice({
 const userReducer = userSlice.reducer;
 const userActions = userSlice.actions;
 
-export { userReducer, getLoggedInUser, checkUserExist, userActions };
+export { userReducer, getLoggedInUser, checkUserExist, userActions, getAllUsers };

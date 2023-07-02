@@ -106,7 +106,7 @@ function SignupForm() {
     function onSubmit(data) {
         let userData = produce(data, (draft) => {
             draft.avatar = draft.avatar[0];
-        })
+        });
 
         const promise = dispatch(registerUser(userData));
         controller.current.abort = promise.abort;
@@ -159,7 +159,7 @@ function SignupForm() {
                 </div>
             ))}
 
-            <button 
+            <button
                 type="submit" 
                 className="btn btn-lg btn-primary w-100 text-center" 
                 disabled={loading}
