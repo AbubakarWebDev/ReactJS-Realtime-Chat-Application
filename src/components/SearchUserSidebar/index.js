@@ -1,14 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import ChatListItem from '../ChatList/ChatListItem';
 import OffCanvasSidebar from '../OffCanvasSidebar';
+import ChatListItem from '../ChatList/ChatListItem';
 
 import { capatalize } from '../../utils';
 import RequestLoader from '../RequestLoader';
+import { getorCreateChats } from '../../store/slices/chatSlice';
 import { homePageActions } from '../../store/slices/homePageSlice';
 import { userActions, getAllUsers } from '../../store/slices/userSlice';
-import { getorCreateChats } from '../../store/slices/chatSlice';
 
 function SearchUserSidebar() {
     const timeoutId = useRef(null);

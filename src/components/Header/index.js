@@ -6,8 +6,8 @@ import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 import { NavDropdown } from 'react-bootstrap';
 
-import { homePageActions } from '../../store/slices/homePageSlice'
-import { authActions } from '../../store/slices/authSlice'
+import { authActions } from '../../store/slices/authSlice';
+import { homePageActions } from '../../store/slices/homePageSlice';
 
 import styles from "./style.module.scss";
 const { avatarImg, navbar } = styles;
@@ -42,7 +42,7 @@ function Header() {
                             <img
                                 alt="User Profile"
                                 className={`rounded-circle mr-2 ${avatarImg}`}
-                                src={`${process.env.REACT_APP_SERVER_BASE_URL}/${user.avatar}`}
+                                src={`${process.env.REACT_APP_SERVER_BASE_URL}/${user?.avatar}`}
                             />
                         }
                     >

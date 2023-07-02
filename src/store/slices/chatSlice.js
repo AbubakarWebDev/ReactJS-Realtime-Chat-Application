@@ -1,7 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 import { handleAPIError } from '../../services/api.service';
-import { getAllChats as chats, getorCreateChats as createChat } from "../../services/chat.service";
+import { 
+    getAllChats as chats, 
+    getorCreateChats as createChat,
+    createGroupChat as groupChat
+} from "../../services/chat.service";
 
 const getAllChats = createAsyncThunk('chat/getAllChats', async (arg, thunkAPI) => {
     try {
@@ -25,11 +29,25 @@ const getorCreateChats = createAsyncThunk('chat/getorCreateChats', async (payloa
     }
 });
 
+const createGroupChat = createAsyncThunk('chat/createGroupChat', async (payload, thunkAPI) => {
+    try {
+        thunkAPI.dispatch(chatSlice.actions.setError(null));
+
+        const response = await groupChat(payload, thunkAPI.signal);
+        return response.data.result.chat;
+    }
+    catch (err) {
+        return thunkAPI.rejectWithValue(handleAPIError(err));
+    }
+});
+
 const initialState = {
     error: null,
     loading: false,
     chats: null,
     activeChat: null,
+    createdChat: null,
+    createdGroupChat: null,
 };
 
 var chatSlice = createSlice({
@@ -67,15 +85,38 @@ var chatSlice = createSlice({
                 state.error = null;
                 state.loading = true;
                 state.activeChat = null;
+                state.createdChat = null;
             })
             .addCase(getorCreateChats.fulfilled, (state, action) => {
                 state.error = null;
                 state.loading = false;
                 state.activeChat = action.payload;
+                state.createdChat = action.payload;
             })
             .addCase(getorCreateChats.rejected, (state, action) => {
                 state.loading = false;
                 state.activeChat = null;
+                state.createdChat = null;
+                state.error = action.payload;
+            })
+
+            // Register Reducers for createGroupChatٖ action
+            .addCase(createGroupChat.pending, (state) => {
+                state.error = null;
+                state.loading = true;
+                state.activeChat = null;
+                state.createdGroupChat = null;
+            })
+            .addCase(createGroupChat.fulfilled, (state, action) => {
+                state.error = null;
+                state.loading = false;
+                state.activeChat = action.payload;
+                state.createdGroupChat = action.payload;
+            })
+            .addCase(createGroupChat.rejected, (state, action) => {
+                state.loading = false;
+                state.activeChat = null;
+                state.createdGroupChat = null;
                 state.error = action.payload;
             })
     },
@@ -84,4 +125,4 @@ var chatSlice = createSlice({
 const chatReducer = chatSlice.reducer;
 const chatActions = chatSlice.actions;
 
-export { getAllChats, chatReducer, chatActions, getorCreateChats };
+export { getAllChats, chatReducer, chatActions, getorCreateChats, createGroupChat };

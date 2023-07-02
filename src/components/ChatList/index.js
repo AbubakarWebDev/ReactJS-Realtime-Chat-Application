@@ -1,33 +1,56 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { HiPlusCircle } from 'react-icons/hi';
 import { useSelector, useDispatch } from "react-redux";
 
 import ChatListItem from "./ChatListItem";
 import RequestLoader from './../RequestLoader';
-import { getAllChats, chatActions } from '../../store/slices/chatSlice';
+import CreateGroupChatModal from './../CreateGroupChatModal';
+import { getAllChats, chatActions, createGroupChat } from '../../store/slices/chatSlice';
 
-import styles from "./style.module.scss";
 import { getSender, capatalize, elipsis, convertTo12HourFormat } from '../../utils';
+
+import defaultGroupImage from "../../assets/images/group-icon.png";
+import styles from "./style.module.scss";
 const { chatListContainer, chatListHeader } = styles;
 
 function ChatList() {
-  const dispatch = useDispatch();
-  const controller = useRef({ abort: () => {} });
+  const chatController = useRef({ abort: () => { } });
+  const groupController = useRef({ abort: () => { } });
+  const [openGroupModal, setOpenGroupModal] = useState(false);
 
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
-  const { loading, error, chats, activeChat } = useSelector((state) => state.chat);
+  const {
+    error,
+    chats, 
+    loading,
+    activeChat,
+    createdChat,
+    createdGroupChat
+  } = useSelector((state) => state.chat);
 
   useEffect(() => {
     const promise = dispatch(getAllChats());
-    controller.current.abort = promise.abort;
+    chatController.current.abort = promise.abort;
 
-    return () => { 
-      controller.current.abort();
+    return () => {
+      chatController.current.abort();
+      groupController.current.abort();
     }
-  }, []);
+  }, [createdChat, createdGroupChat]);
 
-  function handleGroupClick() {
-    
+  function handleGroupChat(formData) {
+    let payload = {
+      chatName: formData.groupName,
+      users: [...formData.users]
+    };
+
+    const promise = dispatch(createGroupChat(payload));
+    groupController.current.abort = promise.abort;
+
+    promise.unwrap().then(() => {
+      setOpenGroupModal(false);
+    })
   }
 
   return (
@@ -35,31 +58,43 @@ function ChatList() {
       <div className={chatListHeader}>
         <h4>My Chats</h4>
 
-        <button type="button" className="btn btn-light btn-outline-dark d-flex align-items-center">
-          <span className="me-2" onClick={handleGroupClick}>New Group Chat</span>
+        <button
+          type="button"
+          onClick={() => setOpenGroupModal(true)}
+          className="btn btn-light btn-outline-dark d-flex align-items-center"
+        >
+          <span className="me-2">New Group Chat</span>
           <HiPlusCircle />
         </button>
       </div>
 
+      <CreateGroupChatModal
+        show={openGroupModal}
+        onSubmit={handleGroupChat}
+        setShow={setOpenGroupModal}
+      />
+
       {(loading || error) ? (
         <RequestLoader />
-      ) : chats ? (
+      ) : (chats && user) ? (
         <div className="chatList">
           {chats.map(chat => {
             const sender = getSender(user, chat.users);
-            const chatName = `${capatalize(sender.firstName)} ${capatalize(sender.lastName)}`;
+            const isActive = chat._id === (activeChat && activeChat._id);
             const lastMsgText = sender.latestMessage && elipsis(sender.latestMessage.content);
             const lastMsgTime = sender.latestMessage && convertTo12HourFormat(sender.latestMessage.createdAt);
+            const avatar = chat.isGroupChat ? defaultGroupImage :  `${process.env.REACT_APP_SERVER_BASE_URL}/${sender.avatar}`;
+            const chatName = chat.isGroupChat ? chat.chatName : `${capatalize(sender.firstName)} ${capatalize(sender.lastName)}`;
 
             return (
               <ChatListItem
                 key={chat._id}
+                name={chatName}
+                avatarUrl={avatar}
+                isActive={isActive}
                 lastMsgText={lastMsgText}
                 lastMsgTime={lastMsgTime}
-                name={chat.isGroupChat ? chat.chatName : chatName}
-                isActive={chat._id === (activeChat && activeChat._id)}
                 handleClick={() => dispatch(chatActions.setActiveChat(chat))}
-                avatarUrl={`${process.env.REACT_APP_SERVER_BASE_URL}/${sender.avatar}`}
               />
             );
           })}

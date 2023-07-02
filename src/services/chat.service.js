@@ -32,7 +32,24 @@ const getorCreateChats = (payload, signal) => {
     return Api.post("/chats", payload, options);
 }
 
+const createGroupChat = (payload, signal) => {
+    const token = localStorage.getItem('token');
+
+    const controller = new AbortController();
+    signal.addEventListener('abort', () => controller.abort());
+
+    const options = {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+        signal: controller.signal
+    };
+
+    return Api.post("/chats/group", payload, options);
+}
+
 export {
     getAllChats,
+    createGroupChat,
     getorCreateChats
 };

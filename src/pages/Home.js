@@ -4,12 +4,10 @@ import Header from '../components/Header';
 import ChatContainer from '../components/ChatContainer';
 import SearchUserSidebar from '../components/SearchUserSidebar';
 
-function Home() {
-  const avatarUrl = "https://ui-avatars.com/api/?bold=true&size=40&background=random&name=M+A";
-  
+function Home() {  
   return (
     <>
-      <Header avatarUrl={avatarUrl} />
+      <Header />
 
       <ChatContainer />
 

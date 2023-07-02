@@ -44,9 +44,25 @@ function convertTo12HourFormat(dateString) {
     return date.toLocaleString('en-US', options);
 }
 
+function transFormIntoOptions(array, label, value, obj) {
+    return array.map((item) => {
+        const option = {
+            label: (typeof label === "function") ? label(item) : item[label],
+            value: (typeof value === "function") ? value(item) : item[value],
+        };
+
+        Object.entries(obj).forEach(([key, value]) => {
+            option[key] = (typeof value === "function") ? value(item) : item[value];
+        });
+
+        return option;
+    });
+}
+
 export {
     convertToMultipartFormData,
     convertTo12HourFormat,
+    transFormIntoOptions,
     isValidJson,
     getSender,
     capatalize,
