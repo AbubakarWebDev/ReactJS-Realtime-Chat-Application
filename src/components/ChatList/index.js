@@ -9,7 +9,6 @@ import { getAllChats, chatActions, createGroupChat } from '../../store/slices/ch
 
 import { getSender, capatalize, elipsis, convertTo12HourFormat } from '../../utils';
 
-import defaultGroupImage from "../../assets/images/group-icon.png";
 import styles from "./style.module.scss";
 const { chatListContainer, chatListHeader } = styles;
 
@@ -81,19 +80,19 @@ function ChatList() {
           {chats.map(chat => {
             const sender = getSender(user, chat.users);
             const isActive = chat._id === (activeChat && activeChat._id);
+            const avatar = chat.isGroupChat ? chat.groupIcon : sender.avatar;
             const lastMsgText = sender.latestMessage && elipsis(sender.latestMessage.content);
             const lastMsgTime = sender.latestMessage && convertTo12HourFormat(sender.latestMessage.createdAt);
-            const avatar = chat.isGroupChat ? defaultGroupImage :  `${process.env.REACT_APP_SERVER_BASE_URL}/${sender.avatar}`;
             const chatName = chat.isGroupChat ? chat.chatName : `${capatalize(sender.firstName)} ${capatalize(sender.lastName)}`;
 
             return (
               <ChatListItem
                 key={chat._id}
                 name={chatName}
-                avatarUrl={avatar}
                 isActive={isActive}
                 lastMsgText={lastMsgText}
                 lastMsgTime={lastMsgTime}
+                avatarUrl={`${process.env.REACT_APP_SERVER_BASE_URL}/${avatar}`}
                 handleClick={() => dispatch(chatActions.setActiveChat(chat))}
               />
             );

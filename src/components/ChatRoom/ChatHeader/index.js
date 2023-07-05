@@ -3,13 +3,15 @@ import { BsEyeFill } from "react-icons/bs";
 
 import styles from "./style.module.scss";
 
-function ChatHeader({ userName }) {
+function ChatHeader({ userName, handleClick }) {
     const { chatHeaderContainer } = styles;
 
     return (
         <div className={chatHeaderContainer}>
             <span> { userName } </span>
-            <button className='btn btn-light'> <BsEyeFill /> </button>
+            <button className='btn btn-light' onClick={handleClick}> 
+                <BsEyeFill /> 
+            </button>
         </div>
     );
 }

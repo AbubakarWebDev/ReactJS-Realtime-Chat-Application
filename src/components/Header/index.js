@@ -37,6 +37,7 @@ function Header() {
                     <Link className="text-decoration-none text-dark fs-4 fw-bold" to="/" >Chat Me Up</Link>
 
                     <NavDropdown 
+                        as="div"
                         id="user-dropdown"
                         title={
                             <img
