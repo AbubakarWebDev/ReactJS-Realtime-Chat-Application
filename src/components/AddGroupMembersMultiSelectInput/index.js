@@ -30,10 +30,10 @@ function CustomOptionComponent(props) {
     );
 };
 
-function AddGroupMembersMultiSelectInput({ control, errors }) {
+function AddGroupMembersMultiSelectInput({ control, errors, users = [] }) {
     const timeoutId = useRef(null);
     const controller = useRef({ abort: () => { } });
-    const [selectedUsers, setSelectedUsers] = useState([]);
+    const [selectedUsers, setSelectedUsers] = useState(users);
 
     const dispatch = useDispatch();
     const { loading, error } = useSelector((state) => state.user);
@@ -70,7 +70,7 @@ function AddGroupMembersMultiSelectInput({ control, errors }) {
         <Controller
             name="users"
             control={control}
-            render={({ field: { name, onBlur, onChange } }) => (
+            render={({ field: { name, onBlur, onChange, value } }) => (
                 <>
                     <AsyncSelect
                         name={name}

@@ -15,7 +15,7 @@ const schema = yup.object().shape({
             /^[a-zA-Z0-9_ ]+$/,
             'Group Name can only contain alphanumeric characters and underscores'
         ),
-    users: yup.array().required('Group Must Contains at least one User')
+    users: yup.array().of(yup.string()).min(1, 'Group Must Contains at least one User').required("Users is Required!")
 });
 
 function CreateGroupChatModal({ show, setShow, onSubmit }) {

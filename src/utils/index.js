@@ -51,9 +51,11 @@ function transFormIntoOptions(array, label, value, obj) {
             value: (typeof value === "function") ? value(item) : item[value],
         };
 
-        Object.entries(obj).forEach(([key, value]) => {
-            option[key] = (typeof value === "function") ? value(item) : item[value];
-        });
+        if (obj) {
+            Object.entries(obj).forEach(([key, value]) => {
+                option[key] = (typeof value === "function") ? value(item) : item[value];
+            });
+        }
 
         return option;
     });

@@ -39,6 +39,9 @@ function ChatList() {
   }, [createdChat, createdGroupChat]);
 
   function handleGroupChat(formData) {
+
+    console.log(formData);
+
     let payload = {
       chatName: formData.groupName,
       users: [...formData.users]

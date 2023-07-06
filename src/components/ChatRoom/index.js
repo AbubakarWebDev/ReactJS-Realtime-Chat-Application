@@ -18,6 +18,10 @@ function ChatRoom() {
     const user = useSelector((state) => state.user.user);
     const chat = useSelector((state) => state.chat.activeChat);
 
+    function updateProfile(data) {
+        console.log(data);
+    }
+
     return (
         <div className={chatRoomContainer}>
             {(user && chat) ? (
@@ -36,6 +40,7 @@ function ChatRoom() {
                     <ChatProfileModal 
                         user={user}
                         activeChat={chat}
+                        onSubmit={updateProfile}
                         show={openChatProfileModal}
                         setShow={setOpenChatProfileModal}
                     />
