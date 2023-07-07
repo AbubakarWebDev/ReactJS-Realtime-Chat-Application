@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { produce } from "immer";
 import { HiPlusCircle } from 'react-icons/hi';
 import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect, useRef, useState } from 'react';
 
 import ChatListItem from "./ChatListItem";
 import RequestLoader from './../RequestLoader';
@@ -39,20 +40,19 @@ function ChatList() {
   }, [createdChat, createdGroupChat]);
 
   function handleGroupChat(formData) {
+    const payload = produce(formData, (draft) => {
+      draft.chatName = draft.groupName;
+      draft.users = draft.users.map(user => user.value);
 
-    console.log(formData);
-
-    let payload = {
-      chatName: formData.groupName,
-      users: [...formData.users]
-    };
+      delete draft.groupName;
+    });
 
     const promise = dispatch(createGroupChat(payload));
     groupController.current.abort = promise.abort;
 
     promise.unwrap().then(() => {
       setOpenGroupModal(false);
-    })
+    });
   }
 
   return (

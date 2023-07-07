@@ -15,7 +15,7 @@ const schema = yup.object().shape({
             /^[a-zA-Z0-9_ ]+$/,
             'Group Name can only contain alphanumeric characters and underscores'
         ),
-    users: yup.array().of(yup.string()).min(1, 'Group Must Contains at least one User').required("Users is Required!")
+    users: yup.array().of(yup.object()).min(1, 'Group Must Contains at least one User').required("Users is Required!")
 });
 
 function CreateGroupChatModal({ show, setShow, onSubmit }) {
@@ -47,6 +47,7 @@ function CreateGroupChatModal({ show, setShow, onSubmit }) {
                 <AddGroupMembersMultiSelectInput
                     control={control}
                     errors={errors}
+                    name="users"
                 />
             </Modal.Body>
 

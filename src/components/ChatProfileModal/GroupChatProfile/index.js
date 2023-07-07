@@ -5,7 +5,10 @@ import AddGroupMembersMultiSelectInput from "../../AddGroupMembersMultiSelectInp
 import styles from "./style.module.scss";
 const { groupProfileForm } = styles;
 
-function GroupChatProfile({ register, control, errors, users }) {
+function GroupChatProfile({ register, control, errors, users, groupAdmins, user }) {
+
+  const checkGroupAdmins = groupAdmins.some(elem => elem.value === user._id);
+
   return (
     <div className={groupProfileForm}>
       <div className="mb-3">
@@ -25,15 +28,30 @@ function GroupChatProfile({ register, control, errors, users }) {
         )}
       </div>
 
-      <div className='mb-0'>
+      <div className='mb-3'>
         <label htmlFor="users">Update Group Members</label>
 
         <AddGroupMembersMultiSelectInput
           control={control}
           errors={errors}
           users={users}
+          name="users"
         />
       </div>
+
+      {checkGroupAdmins && (
+        <div className='mb-0'>
+          <label htmlFor="groupAdmins">Update Group Admin</label>
+
+          <AddGroupMembersMultiSelectInput
+            users={groupAdmins}
+            control={control}
+            customUser={user}
+            name="groupAdmins"
+            errors={errors}
+          />
+        </div>
+      )}
     </div>
   );
 }

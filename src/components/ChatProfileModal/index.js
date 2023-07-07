@@ -20,22 +20,31 @@ const schema = yup.object().shape({
             /^[a-zA-Z0-9_ ]+$/,
             'Group Name can only contain alphanumeric characters and underscores'
         ),
-    users: yup.array().of(yup.string()).min(1, 'Group Must Contains at least one User').required("Users is Required!")
+    users: yup.array().of(yup.object()).min(1, 'Group Must Contains at least one User').required("Users is Required!"),
+    groupAdmins: yup.array().of(yup.object()).min(1, 'Group Must Contains at least one Admin').required("Group Admin is Required!"),
 });
 
-function ChatProfileModal({ show, setShow, activeChat, user, onSubmit }) {
+function ChatProfileModal({ show, setShow, activeChat, user, onSubmit, onLeaveGroup }) {
     const sender = getSender(user, activeChat.users);
     const avatar = activeChat.isGroupChat ? activeChat.groupIcon : sender.avatar;
 
-    const chatName = activeChat.isGroupChat 
-        ? activeChat.chatName 
+    const chatName = activeChat.isGroupChat
+        ? activeChat.chatName
         : `${capatalize(sender.firstName)} ${capatalize(sender.lastName)}`;
 
-    const options = transFormIntoOptions(
-        activeChat.users,
-        (user) => `${user.firstName} ${user.lastName}`,
-        "_id",
-    );
+    if (activeChat.isGroupChat) {
+        var groupUsers = transFormIntoOptions(
+            activeChat.users,
+            (user) => `${user.firstName} ${user.lastName}`,
+            "_id",
+        );
+    
+        var groupAdmins = transFormIntoOptions(
+            activeChat.groupAdmins,
+            (user) => `${user.firstName} ${user.lastName}`,
+            "_id",
+        );
+    }
 
     const { register, control, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema),
@@ -44,7 +53,6 @@ function ChatProfileModal({ show, setShow, activeChat, user, onSubmit }) {
         reValidateMode: "onChange",
         defaultValues: {
             groupName: activeChat.chatName,
-            users: options
         }
     });
 
@@ -68,11 +76,13 @@ function ChatProfileModal({ show, setShow, activeChat, user, onSubmit }) {
 
                 {activeChat.isGroupChat && (
                     <GroupChatProfile
-                        users={options}
+                        user={user}
                         errors={errors}
                         control={control}
                         chat={activeChat}
+                        users={groupUsers}
                         register={register}
+                        groupAdmins={groupAdmins}
                     />
                 )}
             </Modal.Body>
@@ -81,7 +91,7 @@ function ChatProfileModal({ show, setShow, activeChat, user, onSubmit }) {
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShow(false)}>Close</Button>
                     <Button variant="primary" onClick={handleSubmit(onSubmit)}>Create Group Chat</Button>
-                    <Button variant="danger" onClick={handleSubmit(onSubmit)}>Leave Group</Button>
+                    <Button variant="danger" onClick={onLeaveGroup}>Leave Group</Button>
                 </Modal.Footer>
             )}
         </Modal>

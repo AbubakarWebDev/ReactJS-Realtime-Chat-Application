@@ -30,10 +30,9 @@ function CustomOptionComponent(props) {
     );
 };
 
-function AddGroupMembersMultiSelectInput({ control, errors, users = [] }) {
+function AddGroupMembersMultiSelectInput({ name, control, errors, users = [], customUser }) {
     const timeoutId = useRef(null);
     const controller = useRef({ abort: () => { } });
-    const [selectedUsers, setSelectedUsers] = useState(users);
 
     const dispatch = useDispatch();
     const { loading, error } = useSelector((state) => state.user);
@@ -55,7 +54,7 @@ function AddGroupMembersMultiSelectInput({ control, errors, users = [] }) {
 
             promise.unwrap().then((users) => {
                 const options = transFormIntoOptions(
-                    users,
+                    customUser ? [...users, customUser] : users,
                     (user) => `${user.firstName} ${user.lastName}`,
                     "_id",
                     { avatar: "avatar", email: "email" }
@@ -68,29 +67,27 @@ function AddGroupMembersMultiSelectInput({ control, errors, users = [] }) {
 
     return (
         <Controller
-            name="users"
+            name={name}
             control={control}
+            defaultValue={users}
             render={({ field: { name, onBlur, onChange, value } }) => (
                 <>
                     <AsyncSelect
                         name={name}
+                        value={value}
                         isMulti={true}
                         onBlur={onBlur}
+                        onChange={onChange}
                         cacheOptions={true}
-                        value={selectedUsers}
                         defaultOptions={true}
                         placeholder="Add Users"
                         loadOptions={loadUsers}
                         isLoading={loading || error}
                         components={{ Option: CustomOptionComponent }}
-                        onChange={(options) => {
-                            setSelectedUsers(options);
-                            onChange(options.map(option => option.value));
-                        }}
                     />
 
-                    {errors.users && (
-                        <b className="text-danger d-block mt-1">{errors.users.message}</b>
+                    {errors[name] && (
+                        <b className="text-danger d-block mt-1">{errors[name].message}</b>
                     )}
                 </>
             )}
