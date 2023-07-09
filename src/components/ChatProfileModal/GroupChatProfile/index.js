@@ -1,18 +1,31 @@
 import React from 'react';
 
+import ChatListItem from "../../ChatList/ChatListItem";
 import AddGroupMembersMultiSelectInput from "../../AddGroupMembersMultiSelectInput";
+
+import { transFormIntoOptions } from '../../../utils';
 
 import styles from "./style.module.scss";
 const { groupProfileForm } = styles;
 
-function GroupChatProfile({ register, control, errors, users, groupAdmins, user }) {
+function GroupChatProfile({ register, control, errors, user, chat, isGroupAdmin }) {
+  const groupUsers = transFormIntoOptions(
+    chat.users,
+    (user) => `${user.firstName} ${user.lastName}`,
+    "_id",
+    { avatar: "avatar", email: "email" }
+  );
 
-  const checkGroupAdmins = groupAdmins.some(elem => elem.value === user._id);
+  const groupAdmins = transFormIntoOptions(
+    chat.groupAdmins,
+    (user) => `${user.firstName} ${user.lastName}`,
+    "_id",
+    { avatar: "avatar", email: "email" }
+  );
 
   return (
     <div className={groupProfileForm}>
       <div className="mb-3">
-
         <label htmlFor="groupName">Update Group Name</label>
 
         <input
@@ -28,29 +41,59 @@ function GroupChatProfile({ register, control, errors, users, groupAdmins, user 
         )}
       </div>
 
-      <div className='mb-3'>
-        <label htmlFor="users">Update Group Members</label>
+      {isGroupAdmin ? (
+        <>
+          <div className='mb-3'>
+            <label htmlFor="users">Update Group Members</label>
 
-        <AddGroupMembersMultiSelectInput
-          control={control}
-          errors={errors}
-          users={users}
-          name="users"
-        />
-      </div>
+            <AddGroupMembersMultiSelectInput
+              users={groupUsers}
+              control={control}
+              errors={errors}
+              name="users"
+            />
+          </div>
 
-      {checkGroupAdmins && (
-        <div className='mb-0'>
-          <label htmlFor="groupAdmins">Update Group Admin</label>
+          <div className='mb-0'>
+            <label htmlFor="groupAdmins">Update Group Admin</label>
 
-          <AddGroupMembersMultiSelectInput
-            users={groupAdmins}
-            control={control}
-            customUser={user}
-            name="groupAdmins"
-            errors={errors}
-          />
-        </div>
+            <AddGroupMembersMultiSelectInput
+              users={groupAdmins}
+              control={control}
+              customUser={user}
+              name="groupAdmins"
+              errors={errors}
+            />
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="mb-3">
+            <p>Group Admins: </p>
+
+            {[...groupAdmins].map(user => (
+              <ChatListItem
+                key={user.value}
+                name={user.label}
+                lastMsgText={<span><b>Email: </b> {user.email} </span>}
+                avatarUrl={`${process.env.REACT_APP_SERVER_BASE_URL}/${user.avatar}`}
+              />
+            ))}
+          </div>
+
+          <div className="mb-3">
+            <p>Group Members: </p>
+
+            {[...groupUsers].map(user => (
+              <ChatListItem
+                key={user.value}
+                name={user.label}
+                lastMsgText={<span><b>Email: </b> {user.email} </span>}
+                avatarUrl={`${process.env.REACT_APP_SERVER_BASE_URL}/${user.avatar}`}
+              />
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

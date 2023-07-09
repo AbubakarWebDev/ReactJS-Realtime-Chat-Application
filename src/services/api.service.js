@@ -10,8 +10,7 @@ export default axios.create({
 });
 
 function handleAPIError(err) {
-
-  console.log(err);
+  console.log(err, `${err.config.baseURL}${err.config.url}`);
 
   if (err instanceof AxiosError && err.response) {
     const response = err.response.data;

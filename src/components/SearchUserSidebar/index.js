@@ -19,18 +19,8 @@ function SearchUserSidebar() {
     const { users, loading, error } = useSelector((state) => state.user);
     const showSidebar = useSelector((state) => state.homePage.showSidebar);
 
-    useEffect(() => {
-        dispatch(userActions.setError(null));
-
-        return () => {
-            userController.current.abort();
-            chatController.current.abort();
-            clearTimeout(timeoutId);
-        }
-    }, []);
-
     function handleChange(event) {
-        const searchTerm = event.target.value;
+        const searchTerm = event.target.value.trim();
 
         clearTimeout(timeoutId.current);
         userController.current.abort();
@@ -47,6 +37,16 @@ function SearchUserSidebar() {
         const promise = dispatch(getorCreateChats({ userId }));
         userController.current.abort = promise.abort;
     }
+    
+    useEffect(() => {
+        dispatch(userActions.setError(null));
+
+        return () => {
+            userController.current.abort();
+            chatController.current.abort();
+            clearTimeout(timeoutId);
+        }
+    }, []);
 
     return (
         <OffCanvasSidebar

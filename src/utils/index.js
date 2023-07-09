@@ -61,8 +61,34 @@ function transFormIntoOptions(array, label, value, obj) {
     });
 }
 
+function isEqualArrayOfObject(arr1, arr2, obj) {
+    if (arr1.length === arr2.length) {
+        for (let i = 0; i < arr1.length; i++) {
+            const elem1 = arr1[i];
+            const elem2 = arr2[i];
+
+            for (const key in obj) {
+                if (Object.hasOwnProperty.call(obj, key)) {
+                    const value = obj[key];
+
+                    if (["string", "number", "boolean"].includes(typeof elem1[key])) {
+                        if (elem1[key] !== elem2[value]) {
+                            return false
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
 export {
     convertToMultipartFormData,
+    isEqualArrayOfObject,
     convertTo12HourFormat,
     transFormIntoOptions,
     isValidJson,

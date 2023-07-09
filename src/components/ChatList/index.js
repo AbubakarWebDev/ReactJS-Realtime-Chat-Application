@@ -8,7 +8,7 @@ import RequestLoader from './../RequestLoader';
 import CreateGroupChatModal from './../CreateGroupChatModal';
 import { getAllChats, chatActions, createGroupChat } from '../../store/slices/chatSlice';
 
-import { getSender, capatalize, elipsis, convertTo12HourFormat } from '../../utils';
+import { getSender, capatalize } from '../../utils';
 
 import styles from "./style.module.scss";
 const { chatListContainer, chatListHeader } = styles;
@@ -26,7 +26,9 @@ function ChatList() {
     loading,
     activeChat,
     createdChat,
-    createdGroupChat
+    removeGroupUser,
+    renameGroupName,
+    createdGroupChat,
   } = useSelector((state) => state.chat);
 
   useEffect(() => {
@@ -37,7 +39,13 @@ function ChatList() {
       chatController.current.abort();
       groupController.current.abort();
     }
-  }, [createdChat, createdGroupChat]);
+  }, [
+    createdChat, 
+    renameGroupName,
+    createdGroupChat,
+    removeGroupUser,
+    dispatch
+  ]);
 
   function handleGroupChat(formData) {
     const payload = produce(formData, (draft) => {
@@ -81,20 +89,29 @@ function ChatList() {
       ) : (chats && user) ? (
         <div className="chatList">
           {chats.map(chat => {
-            const sender = getSender(user, chat.users);
+            
             const isActive = chat._id === (activeChat && activeChat._id);
-            const avatar = chat.isGroupChat ? chat.groupIcon : sender.avatar;
-            const lastMsgText = sender.latestMessage && elipsis(sender.latestMessage.content);
-            const lastMsgTime = sender.latestMessage && convertTo12HourFormat(sender.latestMessage.createdAt);
-            const chatName = chat.isGroupChat ? chat.chatName : `${capatalize(sender.firstName)} ${capatalize(sender.lastName)}`;
+
+            if (chat.isGroupChat) {
+              var chatName = chat.chatName;
+              var avatar = chat.groupIcon;
+            }
+            else {
+              const sender = getSender(user, chat.users);
+              avatar = sender.avatar;
+              chatName = `${capatalize(sender.firstName)} ${capatalize(sender.lastName)}`;
+            }
+            
+            // const lastMsgText = sender.latestMessage && elipsis(sender.latestMessage.content);
+            // const lastMsgTime = sender.latestMessage && convertTo12HourFormat(sender.latestMessage.createdAt);
 
             return (
               <ChatListItem
                 key={chat._id}
                 name={chatName}
                 isActive={isActive}
-                lastMsgText={lastMsgText}
-                lastMsgTime={lastMsgTime}
+                // lastMsgText={lastMsgText}
+                // lastMsgTime={lastMsgTime}
                 avatarUrl={`${process.env.REACT_APP_SERVER_BASE_URL}/${avatar}`}
                 handleClick={() => dispatch(chatActions.setActiveChat(chat))}
               />
