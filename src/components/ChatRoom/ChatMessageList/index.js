@@ -1,28 +1,52 @@
-import React from 'react';
-
-import styles from "./style.module.scss";
+import React, { useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from "react-redux";
 
 import ChatMessage from "./ChatMessage";
+import RequestLoader from "../../RequestLoader";
 
-function ChatList() {
-  const { chatMessageListContainer } = styles;
+import { capatalize, convertTo12HourFormat } from '../../../utils';
+import { getAllMessages } from "../../../store/slices/messageSlice";
+
+import styles from "./style.module.scss";
+const { chatMessageListContainer } = styles;
+
+function ChatList({ chat, user }) {
+  const controller = useRef({ abort: () => { } });
+
+  const dispatch = useDispatch();
+  const { messages, message, loading, error } = useSelector((state) => state.message);
+
+  useEffect(() => {
+    const promise = dispatch(getAllMessages({ chatId: chat._id }));
+    controller.current.abort = promise.abort;
+
+    return () => {
+      controller.current.abort();
+    }
+  }, [chat, message]);
 
   return (
     <div className={chatMessageListContainer}>
-      <ChatMessage
-        message="Hey! How are you doing?"
-        timestamp="10:44 AM"
-        sender="John Doe"
-        avatarUrl="https://ui-avatars.com/api/?bold=true&size=40&background=random&name=John+Doe"
-        incoming={false}
-      />
-      <ChatMessage
-        message=" Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis explicabo magni cupiditate quisquam nihil inventore suscipit eum repudiandae, doloremque numquam amet illo omnis nostrum voluptatibus, deleniti iste. Reiciendis, quas! Illum at qui aut possimus. Sed praesentium ad minus error architecto perspiciatis cumque molestiae laboriosam? Perferendis, sequi! Vitae blanditiis veniam totam?"
-        timestamp="10:45 AM"
-        sender="Muhammad Abubakar"
-        avatarUrl="https://ui-avatars.com/api/?bold=true&size=40&background=random&name=Muhammad+Abubakar"
-        incoming={true}
-      />
+      {(loading || error) ? (
+        <RequestLoader />
+      ) : (messages && messages.length > 0) ? (
+        <div className="messagesList">
+          {messages.map(message => (
+            <ChatMessage
+              key={message._id}
+              message={message.content}
+              incoming={message.sender._id !== user._id}
+              timestamp={convertTo12HourFormat(message.createdAt)}
+              avatarUrl={`${process.env.REACT_APP_SERVER_BASE_URL}/${message.sender.avatar}`}
+              sender={`${capatalize(message.sender.firstName)} ${capatalize(message.sender.lastName)}`}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center mt-5 fs-3">
+          <b>No Messages Found</b>
+        </div>
+      )}
     </div>
   );
 }

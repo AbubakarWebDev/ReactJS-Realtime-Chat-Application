@@ -22,7 +22,6 @@ import styles from "./style.module.scss";
 const { chatRoomContainer, chatIcon } = styles;
 
 function ChatRoom() {
-    const dispatch = useDispatch();
     const controllers = useRef([
         () => { },
         () => { },
@@ -32,7 +31,8 @@ function ChatRoom() {
 
     const [openModal, setOpenModal] = useState(false);
     const [mountModal, setMountModal] = useState(false);
-
+    
+    const dispatch = useDispatch();
     const user = useSelector((state) => state.user.user);
     const chat = useSelector((state) => state.chat.activeChat);
 
@@ -121,8 +121,13 @@ function ChatRoom() {
                                     ${capatalize(getSender(user, chat.users).lastName)}`
                         }
                     />
-                    <ChatMessageList />
-                    <ChatInput />
+
+                    <ChatMessageList 
+                        chat={chat}
+                        user={user}
+                    />
+
+                    <ChatInput chat={chat} />
 
                     <ToastContainer
                         autoClose={5000}
