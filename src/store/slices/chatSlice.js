@@ -11,6 +11,8 @@ import {
     removeUserFromGroup as removeGroupUser
 } from "../../services/chat.service";
 
+import { sendMessage } from "./messageSlice";
+
 const getAllChats = createAsyncThunk('chat/getAllChats', async (arg, thunkAPI) => {
     try {
         const response = await chats(thunkAPI.signal);
@@ -166,6 +168,7 @@ var chatSlice = createSlice({
             .addCase(createGroupChat.fulfilled, (state, action) => {
                 state.error = null;
                 state.loading = false;
+                state.chats.push(action.payload);
                 state.activeChat = action.payload;
                 state.createdGroupChat = action.payload;
             })
@@ -225,6 +228,9 @@ var chatSlice = createSlice({
                 state.loading = false;
                 state.activeChat = action.payload;
                 state.renameGroupName = action.payload;
+
+                const chat = state.chats.find(chat => chat._id === action.payload._id);
+                chat.chatName = action.payload.chatName;
             })
             .addCase(renameGroupName.rejected, (state, action) => {
                 state.loading = false;
@@ -243,12 +249,20 @@ var chatSlice = createSlice({
                 state.error = null;
                 state.loading = false;
                 state.removeGroupUser = action.payload;
+
+                const chatIndex = state.chats.findIndex(chat => chat._id === action.payload._id);
+                state.chats.splice(chatIndex, 1);
             })
             .addCase(removeUserFromGroup.rejected, (state, action) => {
                 state.loading = false;
                 state.removeGroupUser = null;
                 state.error = action.payload;
             })
+
+            .addCase(sendMessage.fulfilled, (state, action) => {
+                const chat = state.chats.find(chat => chat._id === action.payload.chat._id);
+                chat.latestMessage = action.payload;
+            });
     },
 });
 

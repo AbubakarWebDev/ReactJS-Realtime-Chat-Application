@@ -20,18 +20,7 @@ function ChatList() {
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
-  const {
-    error,
-    chats, 
-    loading,
-    activeChat,
-    createdChat,
-    removeGroupUser,
-    renameGroupName,
-    createdGroupChat,
-  } = useSelector((state) => state.chat);
-
-  const { message } = useSelector((state) => state.message);
+  const { error, chats, loading, activeChat } = useSelector((state) => state.chat);
 
   useEffect(() => {
     const promise = dispatch(getAllChats());
@@ -41,14 +30,7 @@ function ChatList() {
       chatController.current.abort();
       groupController.current.abort();
     }
-  }, [
-    createdChat, 
-    renameGroupName,
-    createdGroupChat,
-    removeGroupUser,
-    dispatch,
-    message
-  ]);
+  }, [dispatch]);
 
   function handleGroupChat(formData) {
     const payload = produce(formData, (draft) => {
@@ -98,6 +80,7 @@ function ChatList() {
             if (chat.isGroupChat) {
               var avatar = chat.groupIcon;
               var chatName = chat.chatName;
+
               var lastMsgText = chat.latestMessage && elipsis(
                 `~${capatalize(chat.latestMessage.sender.firstName)} ${capatalize(chat.latestMessage.sender.lastName)}: ${chat.latestMessage.content}`
               );
@@ -134,4 +117,4 @@ function ChatList() {
   );
 }
 
-export default ChatList;
+export default React.memo(ChatList);

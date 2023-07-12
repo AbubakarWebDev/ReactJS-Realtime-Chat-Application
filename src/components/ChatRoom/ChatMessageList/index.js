@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 
 import ChatMessage from "./ChatMessage";
-import RequestLoader from "../../RequestLoader";
 
 import { capatalize, convertTo12HourFormat } from '../../../utils';
 import { getAllMessages } from "../../../store/slices/messageSlice";
@@ -14,7 +13,7 @@ function ChatList({ chat, user }) {
   const controller = useRef({ abort: () => { } });
 
   const dispatch = useDispatch();
-  const { messages, message, loading, error } = useSelector((state) => state.message);
+  const { messages } = useSelector((state) => state.message);
 
   useEffect(() => {
     const promise = dispatch(getAllMessages({ chatId: chat._id }));
@@ -23,13 +22,11 @@ function ChatList({ chat, user }) {
     return () => {
       controller.current.abort();
     }
-  }, [chat, message]);
+  }, [chat]);
 
   return (
     <div className={chatMessageListContainer}>
-      {(loading || error) ? (
-        <RequestLoader />
-      ) : (messages && messages.length > 0) ? (
+      {(messages && messages.length > 0) && (
         <div className="messagesList">
           {messages.map(message => (
             <ChatMessage
@@ -41,10 +38,6 @@ function ChatList({ chat, user }) {
               sender={`${capatalize(message.sender.firstName)} ${capatalize(message.sender.lastName)}`}
             />
           ))}
-        </div>
-      ) : (
-        <div className="text-center mt-5 fs-3">
-          <b>No Messages Found</b>
         </div>
       )}
     </div>

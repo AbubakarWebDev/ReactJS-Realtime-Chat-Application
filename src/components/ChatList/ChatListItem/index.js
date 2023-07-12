@@ -25,4 +25,4 @@ function ChatListItem({ name, lastMsgText, lastMsgTime, avatarUrl, isActive, han
     );
 };
 
-export default ChatListItem;
+export default React.memo(ChatListItem);
