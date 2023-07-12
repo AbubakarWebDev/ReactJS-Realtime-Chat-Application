@@ -36,13 +36,13 @@ function Header() {
 
                     <Link className="text-decoration-none text-dark fs-4 fw-bold" to="/" >Chat Me Up</Link>
 
-                    <NavDropdown 
+                    {user && (<NavDropdown 
                         as="div"
                         id="user-dropdown"
                         title={
                             <img
                                 alt="User Profile"
-                                className={`rounded-circle mr-2 ${avatarImg}`}
+                                className={`rounded-circle border mr-2 ${avatarImg}`}
                                 src={`${process.env.REACT_APP_SERVER_BASE_URL}/${user?.avatar}`}
                             />
                         }
@@ -52,7 +52,7 @@ function Header() {
                         </Link>
 
                         <NavDropdown.Item as="button" onClick={handleLogout}>Logout</NavDropdown.Item>
-                    </NavDropdown>
+                    </NavDropdown>)}
                 </div>
             </nav>
         </>

@@ -97,15 +97,9 @@ const removeUserFromGroup = createAsyncThunk('chat/removeUserFromGroup', async (
 
 const initialState = {
     error: null,
-    loading: false,
     chats: null,
+    loading: false,
     activeChat: null,
-    createdChat: null,
-    createdGroupChat: null,
-    updateGroupUsers: null,
-    updateGroupAdmins: null,
-    renameGroupName: null,
-    removeGroupUser: null,
 };
 
 var chatSlice = createSlice({
@@ -143,18 +137,18 @@ var chatSlice = createSlice({
                 state.error = null;
                 state.loading = true;
                 state.activeChat = null;
-                state.createdChat = null;
             })
             .addCase(getorCreateChats.fulfilled, (state, action) => {
                 state.error = null;
                 state.loading = false;
                 state.activeChat = action.payload;
-                state.createdChat = action.payload;
+
+                const chat = state.chats.find(chat => chat._id === action.payload._id);
+                if (!chat) state.chats.unshift(action.payload);
             })
             .addCase(getorCreateChats.rejected, (state, action) => {
                 state.loading = false;
                 state.activeChat = null;
-                state.createdChat = null;
                 state.error = action.payload;
             })
 
@@ -163,19 +157,17 @@ var chatSlice = createSlice({
                 state.error = null;
                 state.loading = true;
                 state.activeChat = null;
-                state.createdGroupChat = null;
             })
             .addCase(createGroupChat.fulfilled, (state, action) => {
                 state.error = null;
                 state.loading = false;
-                state.chats.push(action.payload);
                 state.activeChat = action.payload;
-                state.createdGroupChat = action.payload;
+
+                state.chats.unshift(action.payload);
             })
             .addCase(createGroupChat.rejected, (state, action) => {
                 state.loading = false;
                 state.activeChat = null;
-                state.createdGroupChat = null;
                 state.error = action.payload;
             })
 
@@ -183,59 +175,47 @@ var chatSlice = createSlice({
             .addCase(updateGroupUsers.pending, (state) => {
                 state.error = null;
                 state.loading = true;
-                state.updateGroupUsers = null;
             })
             .addCase(updateGroupUsers.fulfilled, (state, action) => {
                 state.error = null;
                 state.loading = false;
-                state.updateGroupUsers = action.payload;
+                state.activeChat = action.payload;
             })
             .addCase(updateGroupUsers.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
-                state.updateGroupUsers = null;
             })
 
             // Register Reducers for "updateGroupAdmins" action
             .addCase(updateGroupAdmins.pending, (state) => {
                 state.error = null;
                 state.loading = true;
-                state.activeChat = null;
-                state.updateGroupAdmins = null;
             })
             .addCase(updateGroupAdmins.fulfilled, (state, action) => {
                 state.error = null;
                 state.loading = false;
                 state.activeChat = action.payload;
-                state.updateGroupAdmins = action.payload;
             })
             .addCase(updateGroupAdmins.rejected, (state, action) => {
                 state.loading = false;
-                state.activeChat = null;
                 state.error = action.payload;
-                state.updateGroupAdmins = null;
             })
 
             // Register Reducers for "renameGroupName" action
             .addCase(renameGroupName.pending, (state) => {
                 state.error = null;
                 state.loading = true;
-                state.activeChat = null;
-                state.renameGroupName = null;
             })
             .addCase(renameGroupName.fulfilled, (state, action) => {
                 state.error = null;
                 state.loading = false;
-                state.activeChat = action.payload;
-                state.renameGroupName = action.payload;
-
+                state.activeChat.chatName = action.payload.chatName;
+                
                 const chat = state.chats.find(chat => chat._id === action.payload._id);
                 chat.chatName = action.payload.chatName;
             })
             .addCase(renameGroupName.rejected, (state, action) => {
                 state.loading = false;
-                state.activeChat = null;
-                state.renameGroupName = null;
                 state.error = action.payload;
             })
 
@@ -243,19 +223,16 @@ var chatSlice = createSlice({
             .addCase(removeUserFromGroup.pending, (state) => {
                 state.error = null;
                 state.loading = true;
-                state.removeGroupUser = null;
             })
             .addCase(removeUserFromGroup.fulfilled, (state, action) => {
                 state.error = null;
                 state.loading = false;
-                state.removeGroupUser = action.payload;
 
                 const chatIndex = state.chats.findIndex(chat => chat._id === action.payload._id);
                 state.chats.splice(chatIndex, 1);
             })
             .addCase(removeUserFromGroup.rejected, (state, action) => {
                 state.loading = false;
-                state.removeGroupUser = null;
                 state.error = action.payload;
             })
 

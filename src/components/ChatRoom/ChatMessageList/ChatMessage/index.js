@@ -8,7 +8,7 @@ function ChatMessage({ message, timestamp, sender,  avatarUrl, incoming = false 
   
   return (
     <div className={`${chatMessageContainer} ${incoming ? incomingMsg : ""}`}>
-      {avatarUrl && <img src={avatarUrl} alt="Avatar" className={avatar} />}
+      {avatarUrl && <img src={avatarUrl} alt="Avatar" className={`${avatar} rounded-circle border`} />}
       
       <div className={`${chatMessage} ${incoming ? incomingMsg : ""}`}>
         {sender && <h3 className={chatMessageHeader}> {sender} </h3>}

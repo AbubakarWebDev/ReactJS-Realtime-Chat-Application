@@ -50,7 +50,7 @@ function ResetPasswordForm() {
 
   const dispatch = useDispatch();
   const { loading, error, isPasswordReset } = useSelector((state) => state.auth);
-  const { loading: userLoading, error: userError, isUserExist } = useSelector((state) => state.user);
+  const { loading: userLoading, error: userError } = useSelector((state) => state.user);
 
   const onSubmit = (data) => {
     const newData = produce(data, (draft) => {
@@ -58,14 +58,14 @@ function ResetPasswordForm() {
       draft.token = token
     });
 
-    const promise = dispatch(resetPassword(data));
+    const promise = dispatch(resetPassword(newData));
     controller.current.abort = promise.abort;
 
     promise.unwrap().then(() => {
       setShowAlert(true);
     })
     .catch(() => {
-      passResetTimeoutId.current = setTimeout(() => navigate('/login'), 3000);
+      passResetTimeoutId.current = setTimeout(() => navigate('/login'), 1500);
     });
   };
 
@@ -74,7 +74,7 @@ function ResetPasswordForm() {
     dispatch(userActions.setError(null));
 
     dispatch(checkUserExist(userId)).unwrap().catch((err) => {
-      userTimeoutId.current = setTimeout(() => navigate('/login'), 3000);
+      userTimeoutId.current = setTimeout(() => navigate('/login'), 1500);
     });
 
     return () => {

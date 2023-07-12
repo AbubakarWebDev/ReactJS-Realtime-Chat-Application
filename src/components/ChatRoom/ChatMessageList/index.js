@@ -9,7 +9,7 @@ import { getAllMessages } from "../../../store/slices/messageSlice";
 import styles from "./style.module.scss";
 const { chatMessageListContainer } = styles;
 
-function ChatList({ chat, user }) {
+function ChatList({ chat, user }, ref) {
   const controller = useRef({ abort: () => { } });
 
   const dispatch = useDispatch();
@@ -25,7 +25,7 @@ function ChatList({ chat, user }) {
   }, [chat]);
 
   return (
-    <div className={chatMessageListContainer}>
+    <div ref={ref} className={chatMessageListContainer}>
       {(messages && messages.length > 0) && (
         <div className="messagesList">
           {messages.map(message => (
@@ -44,4 +44,4 @@ function ChatList({ chat, user }) {
   );
 }
 
-export default ChatList;
+export default React.forwardRef(ChatList);

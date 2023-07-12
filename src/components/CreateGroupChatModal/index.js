@@ -18,13 +18,13 @@ const schema = yup.object().shape({
     users: yup.array().of(yup.object()).min(1, 'Group Must Contains at least one User').required("Users is Required!")
 });
 
-function CreateGroupChatModal({ show, setShow, onSubmit }) {
+function CreateGroupChatModal({ show, onHide, unMountModal, onSubmit }) {
     const { register, control, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema),
     });
 
     return (
-        <Modal show={show}>
+        <Modal show={show} onHide={onHide} onExited={unMountModal} backdrop="static">
             <Modal.Header className="justify-content-center">
                 <Modal.Title>Create Group Chat</Modal.Title>
             </Modal.Header>
@@ -52,8 +52,8 @@ function CreateGroupChatModal({ show, setShow, onSubmit }) {
             </Modal.Body>
 
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShow(false)}>Close</Button>
-                <Button variant="primary" onClick={handleSubmit(onSubmit)}>Create Group Chat</Button>
+                <Button variant="secondary" onClick={onHide}>Close</Button>
+                <Button variant="primary" onClick={handleSubmit(onSubmit)}> Create Group Chat </Button>
             </Modal.Footer>
         </Modal>
     );

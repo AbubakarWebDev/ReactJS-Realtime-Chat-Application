@@ -22,6 +22,7 @@ import styles from "./style.module.scss";
 const { chatRoomContainer, chatIcon } = styles;
 
 function ChatRoom() {
+    const messageContainerRef = useRef(null);
     const controllers = useRef([
         () => { },
         () => { },
@@ -125,9 +126,13 @@ function ChatRoom() {
                     <ChatMessageList 
                         chat={chat}
                         user={user}
+                        ref={messageContainerRef}
                     />
 
-                    <ChatInput chat={chat} />
+                    <ChatInput 
+                        chat={chat} 
+                        messageContainerRef={messageContainerRef}
+                    />
 
                     <ToastContainer
                         autoClose={5000}

@@ -26,7 +26,6 @@ const sendMessage = createAsyncThunk('message/sendMessage', async (payload, thun
 const initialState = {
     error: null,
     messages: null,
-    message: null,
     loading: false,
 };
 
@@ -61,18 +60,15 @@ const messageSlice = createSlice({
             .addCase(sendMessage.pending, (state) => {
                 state.loading = true;
                 state.error = null;
-                state.message = null;
             })
             .addCase(sendMessage.fulfilled, (state, action) => {
                 state.loading = false;
                 state.error = null;
-                state.message = action.payload;
                 state.messages.push(action.payload);
             })
             .addCase(sendMessage.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
-                state.message = null;
             })
     },
 });

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import { IoMdSend } from "react-icons/io";
 import { sendMessage } from "../../../store/slices/messageSlice";
@@ -7,11 +7,40 @@ import { sendMessage } from "../../../store/slices/messageSlice";
 import styles from "./style.module.scss";
 const { chatInputContainer } = styles;
 
-function ChatInput({ chat }) {
+function ChatInput({ chat, messageContainerRef }) {
     const dispatch = useDispatch();
     const controller = useRef({ abort: () => { } });
-
     const [chatMessage, setMessage] = useState("");
+
+    function handleKeyDown(event) {
+        if (event.keyCode === 13) { // 13 is the Enter key code
+            event.preventDefault();
+            handleSubmit();
+        }
+    }
+
+    function scrollChatToBottom() {
+        if (messageContainerRef.current) {
+            messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+        }
+    }
+
+    function handleSubmit() {
+        const payload = {
+            chatId: chat._id,
+            message: chatMessage
+        };
+
+        if (payload.message) {
+            const promise = dispatch(sendMessage(payload));
+            controller.current.abort = promise.abort;
+
+            promise.unwrap().then(() => {
+                setMessage("");
+                scrollChatToBottom();
+            });
+        }
+    }
 
     useEffect(() => {
         return () => {
@@ -19,24 +48,17 @@ function ChatInput({ chat }) {
         }
     }, []);
 
-    function handleClick() {
-        const payload = {
-            chatId: chat._id,
-            message: chatMessage
-        };
-
-        const promise = dispatch(sendMessage(payload));
-        controller.current.abort = promise.abort;
-
-        promise.unwrap().then(() => {
-            setMessage("");
-        });
-    }
-
     return (
         <div className={chatInputContainer}>
-            <input type="text" placeholder='Type a message' onChange={(e) => setMessage(e.target.value)} value={chatMessage} />
-            <button onClick={handleClick}> <IoMdSend /> </button>
+            <input
+                type="text"
+                value={chatMessage}
+                onKeyDown={handleKeyDown}
+                placeholder='Type a message'
+                onChange={(e) => setMessage(e.target.value)}
+            />
+
+            <button onClick={handleSubmit}> <IoMdSend /> </button>
         </div>
     );
 }

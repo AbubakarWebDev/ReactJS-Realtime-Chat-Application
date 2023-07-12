@@ -22,13 +22,15 @@ function SearchUserSidebar() {
     function handleChange(event) {
         const searchTerm = event.target.value.trim();
 
-        clearTimeout(timeoutId.current);
-        userController.current.abort();
-
-        timeoutId.current = setTimeout(() => {
-            const promise = dispatch(getAllUsers(searchTerm));
-            userController.current.abort = promise.abort;
-        }, 500);
+        if (searchTerm) {
+            clearTimeout(timeoutId.current);
+            userController.current.abort();
+    
+            timeoutId.current = setTimeout(() => {
+                const promise = dispatch(getAllUsers(searchTerm));
+                userController.current.abort = promise.abort;
+            }, 500);
+        }
     }
 
     function handleUserClick(userId) {

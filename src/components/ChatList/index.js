@@ -11,12 +11,13 @@ import { getAllChats, chatActions, createGroupChat } from '../../store/slices/ch
 import { getSender, capatalize, elipsis, convertTo12HourFormat } from '../../utils';
 
 import styles from "./style.module.scss";
-const { chatListContainer, chatListHeader } = styles;
+const { chatListContainer, chatListHeader, userChatList } = styles;
 
 function ChatList() {
+  const [openModal, setOpenModal] = useState(false);
+  const [mountModal, setMountModal] = useState(false);
   const chatController = useRef({ abort: () => { } });
   const groupController = useRef({ abort: () => { } });
-  const [openGroupModal, setOpenGroupModal] = useState(false);
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
@@ -30,9 +31,9 @@ function ChatList() {
       chatController.current.abort();
       groupController.current.abort();
     }
-  }, [dispatch]);
+  }, []);
 
-  function handleGroupChat(formData) {
+  function handleGroupChat(formData, reset) {
     const payload = produce(formData, (draft) => {
       draft.chatName = draft.groupName;
       draft.users = draft.users.map(user => user.value);
@@ -44,7 +45,7 @@ function ChatList() {
     groupController.current.abort = promise.abort;
 
     promise.unwrap().then(() => {
-      setOpenGroupModal(false);
+      setOpenModal(false);
     });
   }
 
@@ -55,24 +56,28 @@ function ChatList() {
 
         <button
           type="button"
-          onClick={() => setOpenGroupModal(true)}
-          className="btn btn-light btn-outline-dark d-flex align-items-center"
+          className="btn btn-dark d-flex align-items-center"
+          onClick={() => {
+            setMountModal(true);
+            setOpenModal(true);
+          }}
         >
           <span className="me-2">New Group Chat</span>
           <HiPlusCircle />
         </button>
       </div>
 
-      <CreateGroupChatModal
-        show={openGroupModal}
+      {mountModal && (<CreateGroupChatModal
+        show={openModal}
         onSubmit={handleGroupChat}
-        setShow={setOpenGroupModal}
-      />
+        onHide={() => setOpenModal(false)}
+        unMountModal={() => setMountModal(false)}
+      />)}
 
       {(loading || error) ? (
         <RequestLoader />
-      ) : (chats && user) ? (
-        <div className="chatList">
+      ) : (chats && user && chats.length > 0) ? (
+        <div className={userChatList}>
           {chats.map(chat => {
             
             const isActive = chat._id === (activeChat && activeChat._id);

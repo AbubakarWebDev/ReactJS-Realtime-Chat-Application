@@ -9,7 +9,7 @@ function ChatHeader({ userName, handleClick }) {
     return (
         <div className={chatHeaderContainer}>
             <span> { userName } </span>
-            <button className='btn btn-light' onClick={handleClick}> 
+            <button className='btn btn-dark' onClick={handleClick}> 
                 <BsEyeFill /> 
             </button>
         </div>

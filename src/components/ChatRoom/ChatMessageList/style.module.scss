@@ -1,11 +1,32 @@
 .chatMessageListContainer {
-    width: 100%;
-    padding: 8px;
-    margin: 8px 0;
-    flex: 1;
-    background-color: #EFEFEF;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    position: relative;
-    height: 100%;
-    overflow: auto;
+  width: 100%;
+  padding: 8px;
+  margin: 8px 0;
+  flex: 1;
+  background-color: #efefef;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  position: relative;
+  height: 100%;
+  overflow: auto;
+  transition: all 0.3s ease-in-out;
+
+  /* width */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  /* Track */
+  &::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+
+  /* Handle on hover */
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+  }
 }
