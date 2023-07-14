@@ -8,9 +8,22 @@
     border: 1px solid rgba(0, 0, 0, 0.08);
 
     span {
+        position: relative;
         font-size: 20px;
         font-family: "Poppins", serif;
         font-weight: bold;
+
+        &.onlineUser::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: calc(100% + 10px);
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background-color: #25D366;
+            border-radius: 50%;
+        }
     }
 
     button {

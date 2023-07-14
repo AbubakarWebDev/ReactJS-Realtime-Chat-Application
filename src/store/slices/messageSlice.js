@@ -35,6 +35,9 @@ const messageSlice = createSlice({
     reducers: {
         setError: function (state, action) {
             state.error = action.payload;
+        },
+        pushMessage: function (state, action) {
+            state.messages.push(action.payload);
         }
     },
     extraReducers: (builder) => {

@@ -13,27 +13,27 @@ import { getSender, capatalize, elipsis, convertTo12HourFormat } from '../../uti
 import styles from "./style.module.scss";
 const { chatListContainer, chatListHeader, userChatList } = styles;
 
-function ChatList() {
+function ChatList({ user, onlineUsers }) {
   const [openModal, setOpenModal] = useState(false);
   const [mountModal, setMountModal] = useState(false);
+
   const chatController = useRef({ abort: () => { } });
   const groupController = useRef({ abort: () => { } });
-
+  
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.user);
   const { error, chats, loading, activeChat } = useSelector((state) => state.chat);
 
   useEffect(() => {
     const promise = dispatch(getAllChats());
     chatController.current.abort = promise.abort;
-
+    
     return () => {
       chatController.current.abort();
       groupController.current.abort();
     }
   }, []);
 
-  function handleGroupChat(formData, reset) {
+  function handleGroupChat(formData) {
     const payload = produce(formData, (draft) => {
       draft.chatName = draft.groupName;
       draft.users = draft.users.map(user => user.value);
@@ -79,7 +79,7 @@ function ChatList() {
       ) : (chats && user && chats.length > 0) ? (
         <div className={userChatList}>
           {chats.map(chat => {
-            
+
             const isActive = chat._id === (activeChat && activeChat._id);
 
             if (chat.isGroupChat) {
@@ -96,19 +96,21 @@ function ChatList() {
               avatar = sender.avatar;
               chatName = `${capatalize(sender.firstName)} ${capatalize(sender.lastName)}`;
               lastMsgText = chat.latestMessage && elipsis(chat.latestMessage.content);
+              var isOnline = (onlineUsers[sender._id]) ? true : false;
             }
-            
+
             const lastMsgTime = chat.latestMessage && convertTo12HourFormat(chat.latestMessage.createdAt);
 
             return (
               <ChatListItem
                 key={chat._id}
                 name={chatName}
+                isOnline={isOnline}
                 isActive={isActive}
                 lastMsgText={lastMsgText}
                 lastMsgTime={lastMsgTime}
-                avatarUrl={`${process.env.REACT_APP_SERVER_BASE_URL}/${avatar}`}
                 handleClick={() => dispatch(chatActions.setActiveChat(chat))}
+                avatarUrl={`${process.env.REACT_APP_SERVER_BASE_URL}/${avatar}`}
               />
             );
           })}

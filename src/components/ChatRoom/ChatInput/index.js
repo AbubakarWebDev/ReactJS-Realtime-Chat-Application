@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useDispatch } from "react-redux";
 
+import socket from "../../../socket";
 import { IoMdSend } from "react-icons/io";
 import { sendMessage } from "../../../store/slices/messageSlice";
 
@@ -26,6 +27,8 @@ function ChatInput({ chat, messageContainerRef }) {
     }
 
     function handleSubmit() {
+        socket.connect();
+        
         const payload = {
             chatId: chat._id,
             message: chatMessage
@@ -35,9 +38,11 @@ function ChatInput({ chat, messageContainerRef }) {
             const promise = dispatch(sendMessage(payload));
             controller.current.abort = promise.abort;
 
-            promise.unwrap().then(() => {
-                setMessage("");
+            promise.unwrap().then((message) => {
+                socket.emit("sendMessage", message);
+
                 scrollChatToBottom();
+                setMessage("");
             });
         }
     }

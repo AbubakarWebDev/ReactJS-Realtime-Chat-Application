@@ -10,18 +10,18 @@ import ChatProfileModal from "../ChatProfileModal";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { getSender, capatalize, isEqualArrayOfObject } from '../../utils';
 import {
     updateGroupAdmins,
     updateGroupUsers,
     renameGroupName,
     removeUserFromGroup
 } from "../../store/slices/chatSlice";
+import { getSender, capatalize, isEqualArrayOfObject } from '../../utils';
 
 import styles from "./style.module.scss";
 const { chatRoomContainer, chatIcon } = styles;
 
-function ChatRoom() {
+function ChatRoom({ user, onlineUsers }) {
     const messageContainerRef = useRef(null);
     const controllers = useRef([
         () => { },
@@ -32,9 +32,8 @@ function ChatRoom() {
 
     const [openModal, setOpenModal] = useState(false);
     const [mountModal, setMountModal] = useState(false);
-    
+
     const dispatch = useDispatch();
-    const user = useSelector((state) => state.user.user);
     const chat = useSelector((state) => state.chat.activeChat);
 
     async function updateProfile(formData) {
@@ -47,7 +46,7 @@ function ChatRoom() {
             const promise = dispatch(renameGroupName(payload));
             controllers.current[0] = promise.abort;
 
-            await promise;
+            await promise.unwrap();
         }
 
         var isGroupAdmin = chat.groupAdmins.some(groupAdmin => groupAdmin._id === user._id);
@@ -111,6 +110,9 @@ function ChatRoom() {
             {(user && chat) ? (
                 <>
                     <ChatHeader
+                        isOnline={
+                            (!chat.isGroupChat && onlineUsers[getSender(user, chat.users)._id]) ? true : false
+                        }
                         handleClick={() => {
                             setMountModal(true);
                             setOpenModal(true);
@@ -123,14 +125,14 @@ function ChatRoom() {
                         }
                     />
 
-                    <ChatMessageList 
+                    <ChatMessageList
                         chat={chat}
                         user={user}
                         ref={messageContainerRef}
                     />
 
-                    <ChatInput 
-                        chat={chat} 
+                    <ChatInput
+                        chat={chat}
                         messageContainerRef={messageContainerRef}
                     />
 

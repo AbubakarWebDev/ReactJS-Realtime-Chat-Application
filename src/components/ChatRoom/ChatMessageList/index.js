@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 
+import socket from "../../../socket";
 import ChatMessage from "./ChatMessage";
 
 import { capatalize, convertTo12HourFormat } from '../../../utils';
-import { getAllMessages } from "../../../store/slices/messageSlice";
+import { getAllMessages, messageActions } from "../../../store/slices/messageSlice";
 
 import styles from "./style.module.scss";
 const { chatMessageListContainer } = styles;
@@ -23,6 +24,20 @@ function ChatList({ chat, user }, ref) {
       controller.current.abort();
     }
   }, [chat]);
+
+  useEffect(() => {
+    socket.connect();
+
+    const onReceiveMessage = (message) => {
+      dispatch(messageActions.pushMessage(message));
+    }
+
+    socket.on("receiveMessage", onReceiveMessage);
+
+    return () => {
+      socket.off("receiveMessage", onReceiveMessage);
+    }
+  }, []);
 
   return (
     <div ref={ref} className={chatMessageListContainer}>

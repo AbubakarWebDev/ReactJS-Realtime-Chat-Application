@@ -3,7 +3,7 @@ import { Image } from "react-bootstrap";
 
 import styles from "./style.module.scss";
 
-function ChatListItem({ name, lastMsgText, lastMsgTime, avatarUrl, isActive, handleClick }) {
+function ChatListItem({ name, lastMsgText, lastMsgTime, avatarUrl, isActive, isOnline, handleClick }) {
     return (
         <div 
             onClick={handleClick} 
@@ -11,7 +11,7 @@ function ChatListItem({ name, lastMsgText, lastMsgTime, avatarUrl, isActive, han
         >
             <div className={`${styles.avatar} me-3`}>
                 <Image src={avatarUrl} roundedCircle />
-                {isActive && <div className={styles["active-indicator"]}></div>}
+                {isOnline && <div className={styles["active-indicator"]}></div>}
             </div>
             
             <div className={styles["user-details"]}>
