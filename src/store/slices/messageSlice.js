@@ -1,7 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 import { handleAPIError } from '../../services/api.service';
-import { getAllMessages as getMessages, sendMessage as sendMsg} from "../../services/message.service";
+import {
+    getAllMessages as getMessages,
+    sendMessage as sendMsg,
+    updateReadBy as readBy
+} from "../../services/message.service";
 
 const getAllMessages = createAsyncThunk('message/getAllMessages', async (payload, thunkAPI) => {
     try {
@@ -23,6 +27,16 @@ const sendMessage = createAsyncThunk('message/sendMessage', async (payload, thun
     }
 });
 
+const updateReadBy = createAsyncThunk('message/updateReadBy', async (payload, thunkAPI) => {
+    try {
+        const response = await readBy(payload, thunkAPI.signal);
+        return response.data.result.message;
+    }
+    catch (err) {
+        return thunkAPI.rejectWithValue(handleAPIError(err));
+    }
+});
+
 const initialState = {
     error: null,
     messages: null,
@@ -37,7 +51,9 @@ const messageSlice = createSlice({
             state.error = action.payload;
         },
         pushMessage: function (state, action) {
-            state.messages.push(action.payload);
+            if (state.messages != null) {
+                state.messages.push(action.payload);
+            }
         }
     },
     extraReducers: (builder) => {
@@ -73,10 +89,27 @@ const messageSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
+
+            // reducers for "updateReadBy" action
+            .addCase(updateReadBy.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updateReadBy.fulfilled, (state, action) => {
+                state.loading = false;
+                state.error = null;
+
+                const message = state.messages.find(msg => msg._id === action.payload._id);
+                message.readBy = action.payload.readBy;
+            })
+            .addCase(updateReadBy.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
     },
 });
 
 const messageReducer = messageSlice.reducer;
 const messageActions = messageSlice.actions;
 
-export { messageReducer, messageActions, getAllMessages, sendMessage };
+export { messageReducer, messageActions, getAllMessages, sendMessage, updateReadBy };

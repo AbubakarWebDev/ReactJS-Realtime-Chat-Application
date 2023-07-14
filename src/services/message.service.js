@@ -32,7 +32,24 @@ const sendMessage = (payload, signal) => {
     return Api.post("/messages", payload, options);
 }
 
+const updateReadBy = (payload, signal) => {
+    const token = localStorage.getItem('token');
+
+    const controller = new AbortController();
+    signal.addEventListener('abort', () => controller.abort());
+
+    const options = {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+        signal: controller.signal,
+    };
+
+    return Api.put("/messages/readby", payload, options);
+}
+
 export {
     getAllMessages,
-    sendMessage
+    sendMessage,
+    updateReadBy
 };

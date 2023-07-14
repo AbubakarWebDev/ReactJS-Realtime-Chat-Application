@@ -21,8 +21,7 @@ import { getSender, capatalize, isEqualArrayOfObject } from '../../utils';
 import styles from "./style.module.scss";
 const { chatRoomContainer, chatIcon } = styles;
 
-function ChatRoom({ user, onlineUsers }) {
-    const messageContainerRef = useRef(null);
+function ChatRoom({ user, onlineUsers }, ref) {
     const controllers = useRef([
         () => { },
         () => { },
@@ -128,12 +127,12 @@ function ChatRoom({ user, onlineUsers }) {
                     <ChatMessageList
                         chat={chat}
                         user={user}
-                        ref={messageContainerRef}
+                        ref={ref}
                     />
 
                     <ChatInput
                         chat={chat}
-                        messageContainerRef={messageContainerRef}
+                        messageContainerRef={ref}
                     />
 
                     <ToastContainer
@@ -167,4 +166,4 @@ function ChatRoom({ user, onlineUsers }) {
     );
 }
 
-export default ChatRoom;
+export default React.memo(React.forwardRef(ChatRoom));

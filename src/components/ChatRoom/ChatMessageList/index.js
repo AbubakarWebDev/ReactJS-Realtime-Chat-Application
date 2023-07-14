@@ -6,38 +6,37 @@ import ChatMessage from "./ChatMessage";
 
 import { capatalize, convertTo12HourFormat } from '../../../utils';
 import { getAllMessages, messageActions } from "../../../store/slices/messageSlice";
+import { chatActions } from "../../../store/slices/chatSlice";
 
 import styles from "./style.module.scss";
 const { chatMessageListContainer } = styles;
 
-function ChatList({ chat, user }, ref) {
+function ChatMessageList({ chat, user }, ref) {
   const controller = useRef({ abort: () => { } });
 
   const dispatch = useDispatch();
   const { messages } = useSelector((state) => state.message);
 
+  function scrollChatToBottom() {
+    if (ref.current) {
+      ref.current.scrollTop = ref.current.scrollHeight;
+    }
+  }
+
   useEffect(() => {
+    console.log("mount");
     const promise = dispatch(getAllMessages({ chatId: chat._id }));
     controller.current.abort = promise.abort;
 
+    promise.unwrap().then(() => {
+      requestAnimationFrame(scrollChatToBottom);
+    });
+
     return () => {
+      console.log("unmount...");
       controller.current.abort();
     }
   }, [chat]);
-
-  useEffect(() => {
-    socket.connect();
-
-    const onReceiveMessage = (message) => {
-      dispatch(messageActions.pushMessage(message));
-    }
-
-    socket.on("receiveMessage", onReceiveMessage);
-
-    return () => {
-      socket.off("receiveMessage", onReceiveMessage);
-    }
-  }, []);
 
   return (
     <div ref={ref} className={chatMessageListContainer}>
@@ -45,12 +44,9 @@ function ChatList({ chat, user }, ref) {
         <div className="messagesList">
           {messages.map(message => (
             <ChatMessage
+              user={user}
+              message={message}
               key={message._id}
-              message={message.content}
-              incoming={message.sender._id !== user._id}
-              timestamp={convertTo12HourFormat(message.createdAt)}
-              avatarUrl={`${process.env.REACT_APP_SERVER_BASE_URL}/${message.sender.avatar}`}
-              sender={`${capatalize(message.sender.firstName)} ${capatalize(message.sender.lastName)}`}
             />
           ))}
         </div>
@@ -59,4 +55,4 @@ function ChatList({ chat, user }, ref) {
   );
 }
 
-export default React.forwardRef(ChatList);
+export default React.memo(React.forwardRef(ChatMessageList));

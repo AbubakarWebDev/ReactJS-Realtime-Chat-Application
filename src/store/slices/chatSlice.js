@@ -11,7 +11,7 @@ import {
     removeUserFromGroup as removeGroupUser
 } from "../../services/chat.service";
 
-import { sendMessage } from "./messageSlice";
+import { sendMessage, getAllMessages, messageActions } from "./messageSlice";
 
 const getAllChats = createAsyncThunk('chat/getAllChats', async (arg, thunkAPI) => {
     try {
@@ -111,6 +111,10 @@ var chatSlice = createSlice({
         },
         setActiveChat: function (state, action) {
             state.activeChat = action.payload;
+        },
+        setLatestMessage: function (state, action) {
+            const chat = state.chats.find(chat => chat._id === action.payload.chat._id);
+            chat.latestMessage = action.payload;
         }
     },
     extraReducers: (builder) => {
@@ -210,7 +214,7 @@ var chatSlice = createSlice({
                 state.error = null;
                 state.loading = false;
                 state.activeChat.chatName = action.payload.chatName;
-                
+
                 const chat = state.chats.find(chat => chat._id === action.payload._id);
                 chat.chatName = action.payload.chatName;
             })
@@ -236,11 +240,24 @@ var chatSlice = createSlice({
                 state.error = action.payload;
             })
 
+            // Update the latest message of a chat when we send a message
             .addCase(sendMessage.fulfilled, (state, action) => {
                 const chat = state.chats.find(chat => chat._id === action.payload.chat._id);
                 chat.latestMessage = action.payload;
-            });
-    },
+            })
+
+            // set latest message when some new message pushed using websockets
+            .addCase(messageActions.pushMessage, (state, action) => {
+                const chat = state.chats.find(chat => chat._id === action.payload.chat._id);
+                chat.latestMessage = action.payload;
+            })
+
+            // .addCase(getAllMessages.fulfilled, (state, action) => {
+            //     console.log(action.payload);
+            //     // state.activeChat.latestMessage = action.payload[action.payload.length - 1];
+            //     // const chat = state.chats.find(chat => chat._id === action.payload[action.payload.length - 1].chat._id);
+            // })
+},
 });
 
 const chatReducer = chatSlice.reducer;

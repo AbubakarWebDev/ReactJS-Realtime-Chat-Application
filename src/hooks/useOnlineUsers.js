@@ -9,19 +9,16 @@ const useOnlineStatus = (user) => {
 
         if (user) {
             emit(socket, "setup", user._id);
-            // socket.emit("setup", user._id);
         }
 
         const getOnlineUsers = (users) => {
-            console.log(users);
             setOnlineUsers(users);
         }
 
         socket.on("onlineUsers", getOnlineUsers);
 
         return () => {
-            // socket.off("onlineUsers", getOnlineUsers);
-            // console.log("off", "onlineUsers");
+            socket.off("onlineUsers", getOnlineUsers);
         }
     }, [user]);
 
