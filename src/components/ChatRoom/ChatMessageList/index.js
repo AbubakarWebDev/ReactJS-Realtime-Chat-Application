@@ -31,15 +31,16 @@ function ChatMessageList({ chatId, user }, ref) {
       requestAnimationFrame(scrollChatToBottom);
     });
 
-    socket.on("startTyping", ({ chatId, user }) => {
-      setTyping({
-        user,
-        chatId
-      });
+    socket.on("startTyping", (data) => {
+      if (data.chatId === chatId && data.user._id !== user._id) {
+        setTyping(data.user);
+      }
     });
 
-    socket.on("stopTyping", ({ chatId, user }) => {
-      setTyping(false);
+    socket.on("stopTyping", (data) => {
+      if (data.chatId === chatId && data.user._id !== user._id) {
+        setTyping(false);
+      }
     });
 
     return () => {
@@ -63,8 +64,8 @@ function ChatMessageList({ chatId, user }, ref) {
       )}
 
       <p>
-        {(typing && (typing.chatId === chatId && typing.user._id !== user._id)) && (
-          <span>{capatalize(user.firstName)} {capatalize(user.lastName)} is typing....</span>
+        {typing && (
+          <span>{capatalize(typing.firstName)} {capatalize(typing.lastName)} is typing....</span>
         )}
       </p>
     </div>

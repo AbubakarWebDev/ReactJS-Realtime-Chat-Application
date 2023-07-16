@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { AiOutlineWechat } from "react-icons/ai";
+import { FiArrowLeft } from "react-icons/fi";
 import { useSelector, useDispatch } from "react-redux";
 
 import ChatInput from "./ChatInput";
@@ -16,10 +17,11 @@ import {
     renameGroupName,
     removeUserFromGroup
 } from "../../store/slices/chatSlice";
+import { homePageActions } from '../../store/slices/homePageSlice';
 import { getSender, capatalize, isEqualArrayOfObject } from '../../utils';
 
 import styles from "./style.module.scss";
-const { chatRoomContainer, chatIcon } = styles;
+const { chatRoomContainer, chatIcon, toggleBtn } = styles;
 
 function ChatRoom({ user, onlineUsers }, ref) {
     const controllers = useRef([
@@ -165,7 +167,15 @@ function ChatRoom({ user, onlineUsers }, ref) {
                 </>
             ) : (
                 <div className="d-flex flex-column justify-content-center align-items-center h-100">
+                    <button
+                        className={`btn btn-dark ${toggleBtn}`}
+                        onClick={() => dispatch(homePageActions.setChatRoom(false))}
+                    >
+                        <FiArrowLeft />
+                    </button>
+
                     <AiOutlineWechat className={chatIcon} />
+                    
                     <h3>Click on a user to start chatting</h3>
                 </div>
             )}

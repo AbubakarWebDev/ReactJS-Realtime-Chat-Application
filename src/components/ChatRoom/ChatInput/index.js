@@ -12,7 +12,8 @@ function ChatInput({ chatId, messageContainerRef, user }) {
     const dispatch = useDispatch();
     const [chatMessage, setMessage] = useState("");
 
-    const typingDelay = useRef(1000);
+    const typingTimoutId = useRef(null);
+    const inputRef = useRef(null);
     const controller = useRef({ abort: () => { } });
 
     function scrollChatToBottom() {
@@ -47,9 +48,9 @@ function ChatInput({ chatId, messageContainerRef, user }) {
     }
 
     function startTyping(event) {
-        clearTimeout(typingDelay.current);
+        clearTimeout(typingTimoutId.current);
 
-        socket.emit("typing", {chatId, user});
+        socket.emit("typing", { chatId, user });
 
         if (event.keyCode === 13) { // 13 is the Enter key code
             event.preventDefault();
@@ -58,14 +59,18 @@ function ChatInput({ chatId, messageContainerRef, user }) {
     }
 
     function stopTyping() {
-        clearTimeout(typingDelay.current);
+        clearTimeout(typingTimoutId.current);
 
-        typingDelay.current = setTimeout(function () {
-            socket.emit("typingOff", {chatId, user});
-        }, typingDelay.current);
+        typingTimoutId.current = setTimeout(function () {
+            socket.emit("typingOff", { chatId, user });
+        }, 600);
     }
 
     useEffect(() => {
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
+
         return () => {
             controller.current.abort();
         }
@@ -75,6 +80,7 @@ function ChatInput({ chatId, messageContainerRef, user }) {
         <div className={chatInputContainer}>
             <input
                 type="text"
+                ref={inputRef}
                 value={chatMessage}
                 onKeyUp={stopTyping}
                 onKeyDown={startTyping}

@@ -2,9 +2,15 @@ import React from 'react';
 import { HiPlusCircle } from 'react-icons/hi';
 
 import styles from './style.module.scss';
-const { chatListHeader } = styles;
+import { useDispatch } from 'react-redux';
+import { homePageActions } from '../../../store/slices/homePageSlice';
+import { FiArrowRight } from 'react-icons/fi';
+const { chatListHeader, toggleBtn } = styles;
 
 function ChatListHeader({ handleClick }) {
+
+    const dispatch = useDispatch();
+
     return (
         <div className={chatListHeader}>
             <h4>My Chats</h4>
@@ -16,6 +22,13 @@ function ChatListHeader({ handleClick }) {
             >
                 <span className="me-2">New Group Chat</span>
                 <HiPlusCircle />
+            </button>
+
+            <button
+                className={`btn btn-dark ${toggleBtn}`}
+                onClick={() => dispatch(homePageActions.setChatRoom(true))}
+            >
+                <FiArrowRight />
             </button>
         </div>
     )

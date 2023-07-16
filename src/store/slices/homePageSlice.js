@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     showSidebar: false,
+    showChatRoom: false,
 };
 
 const homePageSlice = createSlice({
@@ -10,6 +11,9 @@ const homePageSlice = createSlice({
     reducers: {
         setSearchUserSidebar: function(state, action) {
             state.showSidebar = action.payload;
+        },
+        setChatRoom: function(state, action) {
+            state.showChatRoom = action.payload;
         }
     },
 });
