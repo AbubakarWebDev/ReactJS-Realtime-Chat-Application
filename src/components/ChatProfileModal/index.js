@@ -93,4 +93,4 @@ function ChatProfileModal({ show, onHide, chat, user, unMountModal, onLeaveGroup
     );
 }
 
-export default ChatProfileModal;
+export default React.memo(ChatProfileModal);

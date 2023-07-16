@@ -8,17 +8,12 @@ import { sendMessage } from "../../../store/slices/messageSlice";
 import styles from "./style.module.scss";
 const { chatInputContainer } = styles;
 
-function ChatInput({ chat, messageContainerRef }) {
+function ChatInput({ chatId, messageContainerRef, user }) {
     const dispatch = useDispatch();
-    const controller = useRef({ abort: () => { } });
     const [chatMessage, setMessage] = useState("");
 
-    function handleKeyDown(event) {
-        if (event.keyCode === 13) { // 13 is the Enter key code
-            event.preventDefault();
-            handleSubmit();
-        }
-    }
+    const typingDelay = useRef(1000);
+    const controller = useRef({ abort: () => { } });
 
     function scrollChatToBottom() {
         if (messageContainerRef.current) {
@@ -28,9 +23,9 @@ function ChatInput({ chat, messageContainerRef }) {
 
     function handleSubmit() {
         socket.connect();
-        
+
         const payload = {
-            chatId: chat._id,
+            chatId: chatId,
             message: chatMessage
         };
 
@@ -47,6 +42,29 @@ function ChatInput({ chat, messageContainerRef }) {
         }
     }
 
+    function handleChange(e) {
+        setMessage(e.target.value);
+    }
+
+    function startTyping(event) {
+        clearTimeout(typingDelay.current);
+
+        socket.emit("typing", {chatId, user});
+
+        if (event.keyCode === 13) { // 13 is the Enter key code
+            event.preventDefault();
+            handleSubmit();
+        }
+    }
+
+    function stopTyping() {
+        clearTimeout(typingDelay.current);
+
+        typingDelay.current = setTimeout(function () {
+            socket.emit("typingOff", {chatId, user});
+        }, typingDelay.current);
+    }
+
     useEffect(() => {
         return () => {
             controller.current.abort();
@@ -58,9 +76,10 @@ function ChatInput({ chat, messageContainerRef }) {
             <input
                 type="text"
                 value={chatMessage}
-                onKeyDown={handleKeyDown}
+                onKeyUp={stopTyping}
+                onKeyDown={startTyping}
+                onChange={handleChange}
                 placeholder='Type a message'
-                onChange={(e) => setMessage(e.target.value)}
             />
 
             <button onClick={handleSubmit}> <IoMdSend /> </button>
@@ -68,4 +87,4 @@ function ChatInput({ chat, messageContainerRef }) {
     );
 }
 
-export default ChatInput;
+export default React.memo(ChatInput);

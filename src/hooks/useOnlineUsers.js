@@ -12,7 +12,14 @@ const useOnlineStatus = (user) => {
         }
 
         const getOnlineUsers = (users) => {
-            setOnlineUsers(users);
+            setOnlineUsers((prevState) => {
+                if (JSON.stringify(users) === JSON.stringify(prevState)) {
+                    return prevState;
+                }
+                else {
+                    return users;
+                }
+            });
         }
 
         socket.on("onlineUsers", getOnlineUsers);

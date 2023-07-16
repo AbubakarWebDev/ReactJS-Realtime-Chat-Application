@@ -12,12 +12,12 @@ import "./styles/globals.scss"
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <Provider store={store}>
       <RouterProvider
         router={router}
         fallbackElement={<Loader />}
       />
     </Provider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );

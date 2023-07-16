@@ -1,17 +1,17 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 
-import socket from "../../../socket";
 import ChatMessage from "./ChatMessage";
 
-import { capatalize, convertTo12HourFormat } from '../../../utils';
-import { getAllMessages, messageActions } from "../../../store/slices/messageSlice";
-import { chatActions } from "../../../store/slices/chatSlice";
+import { capatalize } from "../../../utils";
+import { getAllMessages } from "../../../store/slices/messageSlice";
 
 import styles from "./style.module.scss";
+import socket from './../../../socket';
 const { chatMessageListContainer } = styles;
 
-function ChatMessageList({ chat, user }, ref) {
+function ChatMessageList({ chatId, user }, ref) {
+  const [typing, setTyping] = useState(false);
   const controller = useRef({ abort: () => { } });
 
   const dispatch = useDispatch();
@@ -24,22 +24,32 @@ function ChatMessageList({ chat, user }, ref) {
   }
 
   useEffect(() => {
-    console.log("mount");
-    const promise = dispatch(getAllMessages({ chatId: chat._id }));
+    const promise = dispatch(getAllMessages({ chatId: chatId }));
     controller.current.abort = promise.abort;
 
     promise.unwrap().then(() => {
       requestAnimationFrame(scrollChatToBottom);
     });
 
+    socket.on("startTyping", ({ chatId, user }) => {
+      setTyping({
+        user,
+        chatId
+      });
+    });
+
+    socket.on("stopTyping", ({ chatId, user }) => {
+      setTyping(false);
+    });
+
     return () => {
-      console.log("unmount...");
       controller.current.abort();
     }
-  }, [chat]);
+  }, [chatId]);
 
   return (
     <div ref={ref} className={chatMessageListContainer}>
+      
       {(messages && messages.length > 0) && (
         <div className="messagesList">
           {messages.map(message => (
@@ -51,6 +61,12 @@ function ChatMessageList({ chat, user }, ref) {
           ))}
         </div>
       )}
+
+      <p>
+        {(typing && (typing.chatId === chatId && typing.user._id !== user._id)) && (
+          <span>{capatalize(user.firstName)} {capatalize(user.lastName)} is typing....</span>
+        )}
+      </p>
     </div>
   );
 }

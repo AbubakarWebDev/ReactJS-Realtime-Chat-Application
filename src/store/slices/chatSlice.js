@@ -11,7 +11,9 @@ import {
     removeUserFromGroup as removeGroupUser
 } from "../../services/chat.service";
 
-import { sendMessage, getAllMessages, messageActions } from "./messageSlice";
+import { changeObjectPosition } from '../../utils';
+
+import { sendMessage, messageActions, updateReadBy } from "./messageSlice";
 
 const getAllChats = createAsyncThunk('chat/getAllChats', async (arg, thunkAPI) => {
     try {
@@ -112,10 +114,6 @@ var chatSlice = createSlice({
         setActiveChat: function (state, action) {
             state.activeChat = action.payload;
         },
-        setLatestMessage: function (state, action) {
-            const chat = state.chats.find(chat => chat._id === action.payload.chat._id);
-            chat.latestMessage = action.payload;
-        }
     },
     extraReducers: (builder) => {
         builder
@@ -240,23 +238,45 @@ var chatSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // Update the latest message of a chat when we send a message
+            // Update the latest message of an active chat when we send a message
             .addCase(sendMessage.fulfilled, (state, action) => {
-                const chat = state.chats.find(chat => chat._id === action.payload.chat._id);
-                chat.latestMessage = action.payload;
+                const chatIndex = state.chats.findIndex(chat => chat._id === action.payload.chat._id);
+                state.chats[chatIndex].latestMessage = action.payload;
+
+                if (state.activeChat && (action.payload.chat._id === state.activeChat._id)) {
+                    state.activeChat.latestMessage = action.payload;
+                }
+
+                if (chatIndex !== 0) {
+                    state.chats.unshift(state.chats.splice(chatIndex, 1)[0]);
+                }
             })
 
-            // set latest message when some new message pushed using websockets
+            // set latest message when some new message receieved using websockets
             .addCase(messageActions.pushMessage, (state, action) => {
-                const chat = state.chats.find(chat => chat._id === action.payload.chat._id);
-                chat.latestMessage = action.payload;
+                const chatIndex = state.chats.findIndex(chat => chat._id === action.payload.chat._id);
+                state.chats[chatIndex].latestMessage = action.payload;
+                state.chats[chatIndex].unReadCount = parseInt(state.chats[chatIndex].unReadCount) + 1;
+
+                if (state.activeChat && (action.payload.chat._id === state.activeChat._id)) {
+                    state.activeChat.latestMessage = action.payload;
+                    state.activeChat.unReadCount = parseInt(state.activeChat.unReadCount) + 1;
+                }
+
+                if (chatIndex !== 0) {
+                    state.chats.unshift(state.chats.splice(chatIndex, 1)[0]);
+                }
             })
 
-            // .addCase(getAllMessages.fulfilled, (state, action) => {
-            //     console.log(action.payload);
-            //     // state.activeChat.latestMessage = action.payload[action.payload.length - 1];
-            //     // const chat = state.chats.find(chat => chat._id === action.payload[action.payload.length - 1].chat._id);
-            // })
+            .addCase(updateReadBy.fulfilled, (state, action) => {
+                const chatIndex = state.chats.findIndex(chat => chat._id === action.payload.chat._id);
+                state.chats[chatIndex].unReadCount = state.chats[chatIndex].unReadCount - 1;
+                state.activeChat.unReadCount = state.activeChat.unReadCount - 1;
+                
+                if (chatIndex !== 0) {
+                    state.chats.unshift(state.chats.splice(chatIndex, 1)[0]);
+                }
+            });
 },
 });
 

@@ -86,11 +86,25 @@ function isEqualArrayOfObject(arr1, arr2, obj) {
     return false;
 }
 
+// Function to change the position of an object in the array
+function changeObjectPosition(array, objectIndex, newPosition) {
+    if (objectIndex === -1) {
+        console.error('Object not found in the array');
+        return array; // Return the original array if the object is not found
+    }
+
+    const object = array.splice(objectIndex, 1)[0]; // Remove the object from the array
+    array.splice(newPosition, 0, object); // Insert the object at the new position
+
+    return array;
+}
+
 export {
     convertToMultipartFormData,
     isEqualArrayOfObject,
     convertTo12HourFormat,
     transFormIntoOptions,
+    changeObjectPosition,
     isValidJson,
     getSender,
     capatalize,

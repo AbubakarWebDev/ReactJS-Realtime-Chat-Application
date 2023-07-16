@@ -3,10 +3,20 @@ import { Image } from "react-bootstrap";
 
 import styles from "./style.module.scss";
 
-function ChatListItem({ name, lastMsgText, lastMsgTime, avatarUrl, isActive, isOnline, handleClick }) {
+function ChatListItem({ 
+    name, 
+    chat,
+    isOnline, 
+    isActive,
+    avatarUrl,
+    unReadCount,
+    lastMsgText, 
+    lastMsgTime, 
+    handleClick
+}) {
     return (
         <div 
-            onClick={handleClick} 
+            onClick={() => handleClick(chat)}
             className={`${styles.user} d-flex align-items-center ${isActive ? styles.active : ""}`}
         >
             <div className={`${styles.avatar} me-3`}>
@@ -21,6 +31,8 @@ function ChatListItem({ name, lastMsgText, lastMsgTime, avatarUrl, isActive, isO
                 </div>
                 {lastMsgText && <div className={styles["last-message-text"]}> {lastMsgText} </div>}
             </div>
+
+            {(parseInt(unReadCount) > 0) && <span> {unReadCount} </span>}
         </div>
     );
 };

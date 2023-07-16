@@ -1,34 +1,37 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { capatalize, convertTo12HourFormat } from '../../../../utils';
 import { updateReadBy } from '../../../../store/slices/messageSlice';
+import { chatActions } from '../../../../store/slices/chatSlice';
 
 import styles from "./style.module.scss";
 const { chatMessageContainer, chatMessage, chatMessageHeader, incomingMsg, avatar } = styles;
 
 function ChatMessage({ message, user }) {
-
   const dispatch = useDispatch();
-
-  const incoming = message.sender._id !== user._id;
-  const isMsgRead = message.readBy.find(ruser => ruser === user._id);
+  const controller = useRef({ abort: () => {} });
 
   useEffect(() => {
-    if (incoming && !isMsgRead) {
-      dispatch(updateReadBy({ messageId: message._id }));
+    if ((message.sender._id !== user._id) && !message.readBy.some(ruser => ruser === user._id)) {
+      const promise = dispatch(updateReadBy({ messageId: message._id }));
+      controller.current.abort = promise.abort;
+    }
+
+    return () => {
+      controller.current.abort();
     }
   }, []);
 
   return (
-    <div className={`${chatMessageContainer} ${incoming ? incomingMsg : ""}`}>
+    <div className={`${chatMessageContainer} ${(message.sender._id !== user._id) ? incomingMsg : ""}`}>
       <img
         alt="Avatar"
         className={`${avatar} rounded-circle border`}
         src={`${process.env.REACT_APP_SERVER_BASE_URL}/${message.sender.avatar}`}
       />
 
-      <div className={`${chatMessage} ${incoming ? incomingMsg : ""}`}>
+      <div className={`${chatMessage} ${(message.sender._id !== user._id) ? incomingMsg : ""}`}>
         <h3 className={chatMessageHeader}>
           {`${capatalize(message.sender.firstName)} ${capatalize(message.sender.lastName)}`}
         </h3>
@@ -41,4 +44,4 @@ function ChatMessage({ message, user }) {
   );
 }
 
-export default ChatMessage;
+export default React.memo(ChatMessage);

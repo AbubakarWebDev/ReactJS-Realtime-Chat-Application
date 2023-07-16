@@ -1,0 +1,13 @@
+.chatListHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid rgb(201, 201, 201);
+
+  h4 {
+    margin-bottom: 0;
+    font-family: "Roboto", serif;
+    font-weight: 600;
+  }
+}

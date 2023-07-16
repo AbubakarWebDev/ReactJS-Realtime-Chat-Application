@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { AiOutlineWechat } from "react-icons/ai";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -35,7 +35,7 @@ function ChatRoom({ user, onlineUsers }, ref) {
     const dispatch = useDispatch();
     const chat = useSelector((state) => state.chat.activeChat);
 
-    async function updateProfile(formData) {
+    const updateProfile = useCallback(async (formData) => {
         if (formData.groupName !== chat.chatName) {
             const payload = {
                 chatId: chat._id,
@@ -77,9 +77,9 @@ function ChatRoom({ user, onlineUsers }, ref) {
         }
 
         setOpenModal(false);
-    }
+    }, [chat, user]);
 
-    function handleLeaveGroup() {
+    const handleLeaveGroup = useCallback(() => {
         if (chat.groupAdmins.length === 1 && chat.groupAdmins[0]._id === user._id) {
             toast.error('Error: Unable to leave the group. As the sole admin, you must first assign another user as an admin before leaving');
         }
@@ -96,7 +96,15 @@ function ChatRoom({ user, onlineUsers }, ref) {
                 setOpenModal(false);
             });
         }
-    }
+    }, [user, chat]);
+
+    const handleChatHeaderClick = useCallback(() => {
+        setMountModal(true);
+        setOpenModal(true);
+    }, []);
+
+    const onHide = useCallback(() => setOpenModal(false), []);
+    const unMountModal = useCallback(() => setMountModal(false), []);
 
     useEffect(() => {
         return () => {
@@ -109,13 +117,10 @@ function ChatRoom({ user, onlineUsers }, ref) {
             {(user && chat) ? (
                 <>
                     <ChatHeader
+                        handleClick={handleChatHeaderClick}
                         isOnline={
                             (!chat.isGroupChat && onlineUsers[getSender(user, chat.users)._id]) ? true : false
                         }
-                        handleClick={() => {
-                            setMountModal(true);
-                            setOpenModal(true);
-                        }}
                         userName={
                             chat.isGroupChat
                                 ? chat.chatName
@@ -125,13 +130,15 @@ function ChatRoom({ user, onlineUsers }, ref) {
                     />
 
                     <ChatMessageList
-                        chat={chat}
-                        user={user}
                         ref={ref}
+                        user={user}
+                        chatId={chat._id}
+                        chatUnReadCount={chat.unReadCount}
                     />
 
                     <ChatInput
-                        chat={chat}
+                        user={user}
+                        chatId={chat._id}
                         messageContainerRef={ref}
                     />
 
@@ -148,11 +155,11 @@ function ChatRoom({ user, onlineUsers }, ref) {
                         <ChatProfileModal
                             user={user}
                             chat={chat}
+                            onHide={onHide}
                             show={openModal}
                             onSubmit={updateProfile}
+                            unMountModal={unMountModal}
                             onLeaveGroup={handleLeaveGroup}
-                            onHide={() => setOpenModal(false)}
-                            unMountModal={() => setMountModal(false)}
                         />
                     )}
                 </>

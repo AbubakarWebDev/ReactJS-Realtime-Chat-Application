@@ -1,8 +1,8 @@
 import { produce } from "immer";
-import { HiPlusCircle } from 'react-icons/hi';
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useRef, useState } from 'react';
 
+import socket from "../../socket";
 import ChatListItem from "./ChatListItem";
 import RequestLoader from './../RequestLoader';
 import CreateGroupChatModal from './../CreateGroupChatModal';
@@ -11,7 +11,9 @@ import { getAllChats, chatActions, createGroupChat } from '../../store/slices/ch
 import { getSender, capatalize, elipsis, convertTo12HourFormat } from '../../utils';
 
 import styles from "./style.module.scss";
-const { chatListContainer, chatListHeader, userChatList } = styles;
+import { useCallback } from 'react';
+import ChatListHeader from "./ChatListHeader";
+const { chatListContainer, userChatList } = styles;
 
 function ChatList({ user, onlineUsers }) {
   const [openModal, setOpenModal] = useState(false);
@@ -19,21 +21,21 @@ function ChatList({ user, onlineUsers }) {
 
   const chatController = useRef({ abort: () => { } });
   const groupController = useRef({ abort: () => { } });
-  
+
   const dispatch = useDispatch();
   const { error, chats, loading, activeChat } = useSelector((state) => state.chat);
 
   useEffect(() => {
     const promise = dispatch(getAllChats());
     chatController.current.abort = promise.abort;
-    
+
     return () => {
       chatController.current.abort();
       groupController.current.abort();
     }
   }, []);
 
-  function handleGroupChat(formData) {
+  const handleGroupChat = useCallback((formData) => {
     const payload = produce(formData, (draft) => {
       draft.chatName = draft.groupName;
       draft.users = draft.users.map(user => user.value);
@@ -47,31 +49,30 @@ function ChatList({ user, onlineUsers }) {
     promise.unwrap().then(() => {
       setOpenModal(false);
     });
-  }
+  }, [dispatch])
+
+  const handleChatClick = useCallback((chat) => {
+    dispatch(chatActions.setActiveChat(chat));
+    socket.emit('joinChat', chat._id);
+  }, [dispatch]);
+
+  const handleHeaderClick = useCallback(() => {
+    setMountModal(true);
+    setOpenModal(true);
+  }, []);
+
+  const onHide = useCallback(() => setOpenModal(false), []);
+  const unMountModal = useCallback(() => setMountModal(false), []);
 
   return (
     <div className={chatListContainer}>
-      <div className={chatListHeader}>
-        <h4>My Chats</h4>
-
-        <button
-          type="button"
-          className="btn btn-dark d-flex align-items-center"
-          onClick={() => {
-            setMountModal(true);
-            setOpenModal(true);
-          }}
-        >
-          <span className="me-2">New Group Chat</span>
-          <HiPlusCircle />
-        </button>
-      </div>
+      <ChatListHeader handleClick={handleHeaderClick} />
 
       {mountModal && (<CreateGroupChatModal
+        onHide={onHide}
         show={openModal}
         onSubmit={handleGroupChat}
-        onHide={() => setOpenModal(false)}
-        unMountModal={() => setMountModal(false)}
+        unMountModal={unMountModal}
       />)}
 
       {(loading || error) ? (
@@ -103,13 +104,15 @@ function ChatList({ user, onlineUsers }) {
 
             return (
               <ChatListItem
+                chat={chat}
                 key={chat._id}
                 name={chatName}
                 isOnline={isOnline}
                 isActive={isActive}
                 lastMsgText={lastMsgText}
                 lastMsgTime={lastMsgTime}
-                handleClick={() => dispatch(chatActions.setActiveChat(chat))}
+                handleClick={handleChatClick}
+                unReadCount={chat.unReadCount}
                 avatarUrl={`${process.env.REACT_APP_SERVER_BASE_URL}/${avatar}`}
               />
             );

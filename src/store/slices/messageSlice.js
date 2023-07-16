@@ -51,7 +51,10 @@ const messageSlice = createSlice({
             state.error = action.payload;
         },
         pushMessage: function (state, action) {
-            if (state.messages != null) {
+            if (
+                (state.messages != null && state.messages.length > 0) &&
+                (state.messages[0].chat._id === action.payload.chat._id)
+            ) {
                 state.messages.push(action.payload);
             }
         }

@@ -16,4 +16,4 @@ function ChatHeader({ isOnline, userName, handleClick }) {
     );
 }
 
-export default ChatHeader;
+export default React.memo(ChatHeader);

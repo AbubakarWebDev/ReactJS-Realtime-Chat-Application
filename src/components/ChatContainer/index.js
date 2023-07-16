@@ -5,7 +5,6 @@ import socket from "../../socket";
 import ChatList from '../ChatList';
 import ChatRoom from '../ChatRoom';
 
-import { chatActions } from "../../store/slices/chatSlice";
 import { messageActions } from "../../store/slices/messageSlice";
 
 import useOnlineStatus from "../../hooks/useOnlineUsers";
@@ -32,7 +31,6 @@ function ChatContainer() {
 
         const onReceiveMessage = (message) => {
             dispatch(messageActions.pushMessage(message));
-            dispatch(chatActions.setLatestMessage(message));
             requestAnimationFrame(scrollChatToBottom);
         }
 
