@@ -1,8 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { IoMdSend } from "react-icons/io";
 import { useDispatch } from "react-redux";
 
 import socket from "../../../socket";
-import { IoMdSend } from "react-icons/io";
+import Typing from '../Typing';
+import { capatalize } from "../../../utils";
 import { sendMessage } from "../../../store/slices/messageSlice";
 
 import styles from "./style.module.scss";
@@ -10,6 +12,7 @@ const { chatInputContainer } = styles;
 
 function ChatInput({ chatId, messageContainerRef, user }) {
     const dispatch = useDispatch();
+    const [typing, setTyping] = useState(false);
     const [chatMessage, setMessage] = useState("");
 
     const typingTimoutId = useRef(null);
@@ -71,6 +74,18 @@ function ChatInput({ chatId, messageContainerRef, user }) {
             inputRef.current.focus();
         }
 
+        socket.on("startTyping", (data) => {
+            if (data.chatId === chatId && data.user._id !== user._id) {
+                setTyping(data.user);
+            }
+        });
+
+        socket.on("stopTyping", (data) => {
+            if (data.chatId === chatId && data.user._id !== user._id) {
+                setTyping(false);
+            }
+        });
+
         return () => {
             controller.current.abort();
         }
@@ -89,6 +104,8 @@ function ChatInput({ chatId, messageContainerRef, user }) {
             />
 
             <button onClick={handleSubmit}> <IoMdSend /> </button>
+
+            {typing && (<Typing name={`${capatalize(typing.firstName)} ${capatalize(typing.lastName)}`} />)}
         </div>
     );
 }

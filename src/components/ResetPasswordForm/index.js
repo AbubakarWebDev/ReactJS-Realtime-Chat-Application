@@ -56,6 +56,11 @@ function ResetPasswordForm() {
     const newData = produce(data, (draft) => {
       draft.id = userId
       draft.token = token
+      draft.newPassword = draft.password;
+      draft.confirmNewPassword =  draft.confirmPassword
+
+      delete draft.password;
+      delete draft.confirmPassword;
     });
 
     const promise = dispatch(resetPassword(newData));
@@ -63,9 +68,10 @@ function ResetPasswordForm() {
 
     promise.unwrap().then(() => {
       setShowAlert(true);
+      passResetTimeoutId.current = setTimeout(() => navigate('/login'), 1000);
     })
     .catch(() => {
-      passResetTimeoutId.current = setTimeout(() => navigate('/login'), 1500);
+      passResetTimeoutId.current = setTimeout(() => navigate('/login'), 1000);
     });
   };
 
@@ -74,7 +80,7 @@ function ResetPasswordForm() {
     dispatch(userActions.setError(null));
 
     dispatch(checkUserExist(userId)).unwrap().catch((err) => {
-      userTimeoutId.current = setTimeout(() => navigate('/login'), 1500);
+      userTimeoutId.current = setTimeout(() => navigate('/login'), 1000);
     });
 
     return () => {

@@ -1,17 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 
 import ChatMessage from "./ChatMessage";
-
-import { capatalize } from "../../../utils";
 import { getAllMessages } from "../../../store/slices/messageSlice";
 
 import styles from "./style.module.scss";
-import socket from './../../../socket';
 const { chatMessageListContainer } = styles;
 
 function ChatMessageList({ chatId, user }, ref) {
-  const [typing, setTyping] = useState(false);
   const controller = useRef({ abort: () => { } });
 
   const dispatch = useDispatch();
@@ -31,18 +27,6 @@ function ChatMessageList({ chatId, user }, ref) {
       requestAnimationFrame(scrollChatToBottom);
     });
 
-    socket.on("startTyping", (data) => {
-      if (data.chatId === chatId && data.user._id !== user._id) {
-        setTyping(data.user);
-      }
-    });
-
-    socket.on("stopTyping", (data) => {
-      if (data.chatId === chatId && data.user._id !== user._id) {
-        setTyping(false);
-      }
-    });
-
     return () => {
       controller.current.abort();
     }
@@ -52,7 +36,7 @@ function ChatMessageList({ chatId, user }, ref) {
     <div ref={ref} className={chatMessageListContainer}>
       
       {(messages && messages.length > 0) && (
-        <div className="messagesList">
+        <div className="messagesList pb-3">
           {messages.map(message => (
             <ChatMessage
               user={user}
@@ -62,12 +46,6 @@ function ChatMessageList({ chatId, user }, ref) {
           ))}
         </div>
       )}
-
-      <p>
-        {typing && (
-          <span>{capatalize(typing.firstName)} {capatalize(typing.lastName)} is typing....</span>
-        )}
-      </p>
     </div>
   );
 }
