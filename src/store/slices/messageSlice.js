@@ -7,6 +7,8 @@ import {
     updateReadBy as readBy
 } from "../../services/message.service";
 
+// import { store } from "../index";
+
 const getAllMessages = createAsyncThunk('message/getAllMessages', async (payload, thunkAPI) => {
     try {
         const response = await getMessages(payload, thunkAPI.signal);
@@ -52,10 +54,9 @@ const messageSlice = createSlice({
         },
         pushMessage: function (state, action) {
             if (
-                (state.messages != null && state.messages.length > 0) &&
-                (state.messages[0].chat._id === action.payload.chat._id)
+                (action.payload.activeChat != null) && (action.payload.activeChat._id === action.payload.message.chat._id)
             ) {
-                state.messages.push(action.payload);
+                state.messages.push(action.payload.message);
             }
         }
     },

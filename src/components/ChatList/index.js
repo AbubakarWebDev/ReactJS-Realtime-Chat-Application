@@ -29,6 +29,10 @@ function ChatList({ user, onlineUsers }) {
     const promise = dispatch(getAllChats());
     chatController.current.abort = promise.abort;
 
+    socket.on("joinGroupChat", (chat) => {
+      dispatch(chatActions.pushNewChat(chat));
+    });
+
     return () => {
       chatController.current.abort();
       groupController.current.abort();
@@ -46,8 +50,9 @@ function ChatList({ user, onlineUsers }) {
     const promise = dispatch(createGroupChat(payload));
     groupController.current.abort = promise.abort;
 
-    promise.unwrap().then(() => {
+    promise.unwrap().then((chat) => {
       setOpenModal(false);
+      socket.emit("joinNewGroupChat", { chat, userId: user._id });
     });
   }, [dispatch])
 

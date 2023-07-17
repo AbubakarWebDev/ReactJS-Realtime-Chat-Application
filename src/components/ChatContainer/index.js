@@ -16,6 +16,7 @@ const { chatContainer, chatList, chatRoom } = styles;
 function ChatContainer() {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user.user);
+    const activeChat = useSelector((state) => state.chat.activeChat);
     const showChatRoom = useSelector((state) => state.homePage.showChatRoom);
 
     const chatContainerRef = useRef(null);
@@ -32,7 +33,8 @@ function ChatContainer() {
         socket.connect();
 
         const onReceiveMessage = (message) => {
-            dispatch(messageActions.pushMessage(message));
+            console.log();
+            dispatch(messageActions.pushMessage({ message, activeChat }));
             requestAnimationFrame(scrollChatToBottom);
         }
 
@@ -41,19 +43,19 @@ function ChatContainer() {
         return () => {
             socket.off("receiveMessage", onReceiveMessage);
         }
-    }, []);
+    }, [activeChat]);
 
     return (
         <div className={chatContainer}>
-            <div 
-                className={chatList} 
+            <div
+                className={chatList}
                 style={mobileMatches ? { display: showChatRoom ? "none" : "block" } : {}}
             >
                 <ChatList onlineUsers={onlineUsers} user={user} />
             </div>
 
-            <div 
-                className={chatRoom} 
+            <div
+                className={chatRoom}
                 style={mobileMatches ? { display: showChatRoom ? "block" : "none" } : {}}
             >
                 <ChatRoom ref={chatContainerRef} onlineUsers={onlineUsers} user={user} />

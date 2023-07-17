@@ -114,6 +114,10 @@ var chatSlice = createSlice({
         setActiveChat: function (state, action) {
             state.activeChat = action.payload;
         },
+        pushNewChat: function (state, action) {
+            const chat = state.chats.find(chat => chat._id === action.payload._id);
+            if (!chat) state.chats.unshift(action.payload);
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -246,7 +250,7 @@ var chatSlice = createSlice({
                 if (state.activeChat && (action.payload.chat._id === state.activeChat._id)) {
                     state.activeChat.latestMessage = action.payload;
                 }
-
+                
                 if (chatIndex !== 0) {
                     state.chats.unshift(state.chats.splice(chatIndex, 1)[0]);
                 }
@@ -254,13 +258,13 @@ var chatSlice = createSlice({
 
             // set latest message when some new message receieved using websockets
             .addCase(messageActions.pushMessage, (state, action) => {
-                const chatIndex = state.chats.findIndex(chat => chat._id === action.payload.chat._id);
-                state.chats[chatIndex].latestMessage = action.payload;
-                state.chats[chatIndex].unReadCount = parseInt(state.chats[chatIndex].unReadCount) + 1;
+                const chatIndex = state.chats.findIndex(chat => chat._id === action.payload.message.chat._id);
+                state.chats[chatIndex].latestMessage = action.payload.message;
+                state.chats[chatIndex].unReadCount = parseInt(state.chats[chatIndex].unReadCount ? state.chats[chatIndex].unReadCount : 0) + 1;
 
-                if (state.activeChat && (action.payload.chat._id === state.activeChat._id)) {
-                    state.activeChat.latestMessage = action.payload;
-                    state.activeChat.unReadCount = parseInt(state.activeChat.unReadCount) + 1;
+                if (state.activeChat && (action.payload.message.chat._id === state.activeChat._id)) {
+                    state.activeChat.latestMessage = action.payload.message;
+                    state.activeChat.unReadCount = parseInt(state.activeChat.unReadCount ? state.activeChat.unReadCount : 0) + 1;
                 }
 
                 if (chatIndex !== 0) {

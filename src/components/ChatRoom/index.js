@@ -62,7 +62,7 @@ function ChatRoom({ user, onlineUsers }, ref) {
                 const promise = dispatch(updateGroupUsers(payload));
                 controllers.current[1] = promise.abort;
 
-                await promise;
+                await promise.unwrap();
             }
 
             if (!isEqualArrayOfObject(formData.groupAdmins, chat.groupAdmins, { "value": "_id" })) {
@@ -74,7 +74,7 @@ function ChatRoom({ user, onlineUsers }, ref) {
                 const promise = dispatch(updateGroupAdmins(payload));
                 controllers.current[2] = promise.abort;
 
-                await promise;
+                await promise.unwrap();
             }
         }
 
