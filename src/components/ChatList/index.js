@@ -30,7 +30,18 @@ function ChatList({ user, onlineUsers }) {
     chatController.current.abort = promise.abort;
 
     socket.on("joinGroupChat", (chat) => {
+      console.log("joinGroupChat", chat);
       dispatch(chatActions.pushNewChat(chat));
+    });
+
+    socket.on("updatedGroupChat", (chat) => {
+      console.log("updatedGroupChat", chat);
+      dispatch(chatActions.updateChat(chat));
+    });
+
+    socket.on("deleteGroupChat", (chatId) => {
+      console.log("deleteGroupChat", chatId);
+      dispatch(chatActions.deleteChat(chatId));
     });
 
     return () => {

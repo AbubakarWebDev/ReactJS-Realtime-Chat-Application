@@ -3,6 +3,7 @@ import { AiOutlineWechat } from "react-icons/ai";
 import { FiArrowLeft } from "react-icons/fi";
 import { useSelector, useDispatch } from "react-redux";
 
+import socket from "../../socket";
 import ChatInput from "./ChatInput";
 import ChatHeader from "./ChatHeader";
 import ChatMessageList from "./ChatMessageList";
@@ -18,7 +19,7 @@ import {
     removeUserFromGroup
 } from "../../store/slices/chatSlice";
 import { homePageActions } from '../../store/slices/homePageSlice';
-import { getSender, capatalize, isEqualArrayOfObject } from '../../utils';
+import { getSender, capatalize, isEqualArrayOfObject, findArrayDiff } from '../../utils';
 
 import styles from "./style.module.scss";
 const { chatRoomContainer, chatIcon, toggleBtn } = styles;
@@ -38,6 +39,8 @@ function ChatRoom({ user, onlineUsers }, ref) {
     const chat = useSelector((state) => state.chat.activeChat);
 
     const updateProfile = useCallback(async (formData) => {
+        var updatedChat = null;
+
         if (formData.groupName !== chat.chatName) {
             const payload = {
                 chatId: chat._id,
@@ -47,7 +50,7 @@ function ChatRoom({ user, onlineUsers }, ref) {
             const promise = dispatch(renameGroupName(payload));
             controllers.current[0] = promise.abort;
 
-            await promise.unwrap();
+            updatedChat = await promise.unwrap();
         }
 
         var isGroupAdmin = chat.groupAdmins.some(groupAdmin => groupAdmin._id === user._id);
@@ -62,7 +65,7 @@ function ChatRoom({ user, onlineUsers }, ref) {
                 const promise = dispatch(updateGroupUsers(payload));
                 controllers.current[1] = promise.abort;
 
-                await promise.unwrap();
+                updatedChat = await promise.unwrap();
             }
 
             if (!isEqualArrayOfObject(formData.groupAdmins, chat.groupAdmins, { "value": "_id" })) {
@@ -74,8 +77,25 @@ function ChatRoom({ user, onlineUsers }, ref) {
                 const promise = dispatch(updateGroupAdmins(payload));
                 controllers.current[2] = promise.abort;
 
-                await promise.unwrap();
+                updatedChat = await promise.unwrap();
             }
+        }
+
+        if (updatedChat) {
+            const { addedEntries, removedEntries } = findArrayDiff([
+                ...chat.users, 
+                ...chat.groupAdmins
+            ], [
+                ...updatedChat.users, 
+                ...updatedChat.groupAdmins
+            ]);
+
+            socket.emit("updateGroupChat", { 
+                userId: user._id,
+                chat: updatedChat,
+                addedUser: addedEntries,
+                removedUser: removedEntries
+            });
         }
 
         setOpenModal(false);
@@ -175,7 +195,7 @@ function ChatRoom({ user, onlineUsers }, ref) {
                     </button>
 
                     <AiOutlineWechat className={chatIcon} />
-                    
+
                     <h3>Click on a user to start chatting</h3>
                 </div>
             )}

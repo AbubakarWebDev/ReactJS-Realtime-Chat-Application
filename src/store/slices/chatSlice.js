@@ -111,13 +111,32 @@ var chatSlice = createSlice({
         setError: function (state, action) {
             state.error = action.payload;
         },
+        
         setActiveChat: function (state, action) {
             state.activeChat = action.payload;
         },
+        
         pushNewChat: function (state, action) {
-            const chat = state.chats.find(chat => chat._id === action.payload._id);
-            if (!chat) state.chats.unshift(action.payload);
+            const chatIndex = state.chats.findIndex(chat => chat._id === action.payload._id);
+            if (chatIndex === -1) state.chats.unshift(action.payload);
         },
+        
+        updateChat: function (state, action) {
+            const chatIndex = state.chats.findIndex(chat => chat._id === action.payload._id);
+            if (chatIndex !== -1) state.chats[chatIndex] = action.payload;
+        },
+
+        deleteChat: function(state, action) {
+            const chatIndex = state.chats.findIndex(chat => chat._id === action.payload);
+
+            if (chatIndex !== -1) {
+                state.chats.splice(chatIndex, 1);                
+                
+                if (state.activeChat && (state.activeChat._id === action.payload)) {
+                    state.activeChat = null;
+                }
+            }
+        }
     },
     extraReducers: (builder) => {
         builder

@@ -99,6 +99,13 @@ function changeObjectPosition(array, objectIndex, newPosition) {
     return array;
 }
 
+function findArrayDiff(before, after) {
+    const addedEntries = after.filter(entry => !before.find((beforeEntry) => beforeEntry._id === entry._id));
+    const removedEntries = before.filter(entry => !after.find((afterEntry) => afterEntry._id === entry._id));
+    return { addedEntries, removedEntries };
+}
+
+
 export {
     convertToMultipartFormData,
     isEqualArrayOfObject,
@@ -109,4 +116,5 @@ export {
     getSender,
     capatalize,
     elipsis,
+    findArrayDiff
 };
