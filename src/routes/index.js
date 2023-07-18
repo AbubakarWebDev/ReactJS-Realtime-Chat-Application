@@ -1,15 +1,17 @@
 import { createBrowserRouter } from "react-router-dom";
 
 import Home from "../pages/Home";
-import Login from '../pages/Login';
-import Signup from '../pages/Signup';
+import Login from "../pages/Login";
+import Signup from "../pages/Signup";
 import Profile from "../pages/Profile";
 import Error404 from "../pages/Error404";
-import ResetPassword from '../pages/ResetPassword';
-import ForgotPassword from '../pages/ForgotPassword';
+import ResetPassword from "../pages/ResetPassword";
+import ForgotPassword from "../pages/ForgotPassword";
+import VideoHome from "../pages/VideoHome";
+import Room from "../pages/Room";
 
 import App from "../App";
-import PrivateRoutes from '../components/PrivateRoutes';
+import PrivateRoutes from "../components/PrivateRoutes";
 import privateRoutesLoader from "./privateRoutesLoader";
 
 const router = createBrowserRouter([
@@ -47,6 +49,14 @@ const router = createBrowserRouter([
             path: "/profile",
             element: <Profile />,
           },
+          {
+            path: "/video-home",
+            element: <VideoHome />,
+          },
+          {
+            path: "/room/:roomId",
+            element: <Room />,
+          },
         ],
       },
       {
@@ -56,9 +66,9 @@ const router = createBrowserRouter([
       {
         path: "*",
         element: <Error404 />,
-      }
-    ]
-  }
+      },
+    ],
+  },
 ]);
 
 export default router;
