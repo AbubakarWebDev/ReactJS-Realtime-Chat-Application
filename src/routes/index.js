@@ -9,6 +9,7 @@ import ResetPassword from "../pages/ResetPassword";
 import ForgotPassword from "../pages/ForgotPassword";
 import VideoHome from "../pages/VideoHome";
 import Room from "../pages/Room";
+import FileHome from "../pages/FileHome";
 
 import App from "../App";
 import PrivateRoutes from "../components/PrivateRoutes";
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
           {
             path: "/profile",
             element: <Profile />,
+          },
+          {
+            path: "/file-home",
+            element: <FileHome />,
           },
           {
             path: "/video-home",
