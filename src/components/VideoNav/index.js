@@ -2,7 +2,7 @@ import DateTimeDisplay from "../DateTimeDisplay";
 
 const VideoNav = () => {
   return (
-    <div className="flex items-center justify-between w-full py-4 text-white">
+    <div className="flex items-center justify-between w-full py-4">
       <div className="flex items-center justify-between  w-full px-10">
         <div className="flex items-center justify-between w-full gap-16">
           <div>

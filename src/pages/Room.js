@@ -29,6 +29,6 @@ const Room = () => {
 
   const { roomId } = useParams();
 
-  return <div className="w-screen h-screen" ref={myMeeting}></div>;
+  return <div className="w-screen h-screen bg-gray-200" ref={myMeeting}></div>;
 };
 export default Room;

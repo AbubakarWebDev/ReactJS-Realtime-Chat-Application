@@ -94,40 +94,7 @@ const ProfilePage = () => {
                     </Form.Group>
                   </Col>
                 </Row>
-                {/* Form Row */}
-                <Row className="gx-3 mb-3">
-                  {/* Form Group (organization name) */}
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label className="small mb-1" htmlFor="inputOrgName">
-                        Organization name
-                      </Form.Label>
-                      <Form.Control
-                        id="inputOrgName"
-                        type="text"
-                        placeholder="Enter your organization name"
-                        defaultValue="Start Bootstrap"
-                      />
-                    </Form.Group>
-                  </Col>
-                  {/* Form Group (location) */}
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label
-                        className="small mb-1"
-                        htmlFor="inputLocation"
-                      >
-                        Location
-                      </Form.Label>
-                      <Form.Control
-                        id="inputLocation"
-                        type="text"
-                        placeholder="Enter your location"
-                        defaultValue="San Francisco, CA"
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
+
                 {/* Form Group (email address) */}
                 <Form.Group className="mb-3">
                   <Form.Label
@@ -143,41 +110,6 @@ const ProfilePage = () => {
                     defaultValue="name@example.com"
                   />
                 </Form.Group>
-                {/* Form Row */}
-                <Row className="gx-3 mb-3">
-                  {/* Form Group (phone number) */}
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label className="small mb-1" htmlFor="inputPhone">
-                        Phone number
-                      </Form.Label>
-                      <Form.Control
-                        id="inputPhone"
-                        type="tel"
-                        placeholder="Enter your phone number"
-                        defaultValue="555-123-4567"
-                      />
-                    </Form.Group>
-                  </Col>
-                  {/* Form Group (birthday) */}
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label
-                        className="small mb-1"
-                        htmlFor="inputBirthday"
-                      >
-                        Birthday
-                      </Form.Label>
-                      <Form.Control
-                        id="inputBirthday"
-                        type="text"
-                        name="birthday"
-                        placeholder="Enter your birthday"
-                        defaultValue="06/10/1988"
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
                 {/* Save changes button */}
                 <Button variant="primary" type="button">
                   Save changes

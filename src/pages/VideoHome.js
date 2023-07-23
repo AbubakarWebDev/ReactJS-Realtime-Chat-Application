@@ -1,10 +1,10 @@
+import "../styles/index.css";
 import { useState } from "react";
 import HomePageGraphic from "../assets/images/animation.gif";
 import VideoNav from "../components/VideoNav";
 import { BsFillKeyboardFill } from "react-icons/bs";
 import { BiVideoPlus } from "react-icons/bi";
 import Modal from "../components/Modal";
-import "../styles/index.css";
 
 const Home = () => {
   const [roomId, setRoomId] = useState("");
@@ -16,7 +16,7 @@ const Home = () => {
   };
 
   return (
-    <>
+    <div className="bg-gray-200">
       {showModal && (
         <Modal
           showModal={showModal}
@@ -25,11 +25,11 @@ const Home = () => {
         />
       )}
       <VideoNav />
-      <div className="gap-16 bg-gray-20 py-10 md:h-full md:pb-0 text-white">
-        <div className="md:flex mx-auto w-[90%] items-center justify-center md:h-5/6">
+      <div className="gap-16 py-10 md:h-full md:pb-0 ">
+        <div className="md:flex mx-auto  w-[90%] items-center justify-center md:h-5/6">
           <div className=" mt-10 md:basis-3/4">
             <div className="-mt-10">
-              <h1 className="text-3xl leading-tight md:text-5xl">
+              <h1 className="text-3xl leading-tight md:text-[44px]">
                 High-quality video conferences.
                 <br />
                 Now accessible to all.
@@ -47,17 +47,17 @@ const Home = () => {
                       type="text"
                       placeholder=" Enter Room Code"
                       required
-                      className=" text-xl pl-16 py-4 rounded-md border border-gray-700"
+                      className=" text-xl pl-16 py-3 rounded-md border border-gray-700"
                       onChange={(e) => setRoomId(e.target.value)}
                     />
                     <span className="absolute left-5 top-1/2 transform -translate-y-1/2">
                       <BsFillKeyboardFill size={30} />
                     </span>
                   </div>
-                  <div className="my-5 md:mx-5">
+                  <div className="my-3 md:mx-5">
                     <button
                       type="submit"
-                      className=" bg-blue-700 px-16 py-4 text-white text-lg rounded-lg flex items-center hover:bg-blue-600"
+                      className=" bg-blue-700 px-16 py-3 text-white text-lg rounded-lg flex items-center hover:bg-blue-600"
                     >
                       <BiVideoPlus size={30} className="mr-1" />
                       Join
@@ -67,7 +67,7 @@ const Home = () => {
               </form>
             </div>
           </div>
-          <div className="flex basis-3/5 justify-center md:z-10 md:ml-40 md:mt-16 md:justify-items-end">
+          <div className="flex basis-3/5 justify-center align-top md:z-10 md:ml-40 md:mt-16 md:justify-items-end">
             <img
               src={HomePageGraphic}
               alt="Home-
@@ -76,7 +76,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 export default Home;

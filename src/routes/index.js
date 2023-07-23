@@ -10,6 +10,8 @@ import ForgotPassword from "../pages/ForgotPassword";
 import VideoHome from "../pages/VideoHome";
 import Room from "../pages/Room";
 import FileHome from "../pages/FileHome";
+import MainHeader from "../components/MainHeader";
+import About from "../pages/About";
 
 import App from "../App";
 import PrivateRoutes from "../components/PrivateRoutes";
@@ -61,6 +63,14 @@ const router = createBrowserRouter([
           {
             path: "/room/:roomId",
             element: <Room />,
+          },
+          {
+            path: "/main-header",
+            element: <MainHeader />,
+          },
+          {
+            path: "/about-us",
+            element: <About />,
           },
         ],
       },
