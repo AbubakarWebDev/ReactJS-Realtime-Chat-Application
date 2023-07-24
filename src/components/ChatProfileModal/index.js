@@ -61,7 +61,7 @@ function ChatProfileModal({ show, onHide, chat, user, unMountModal, onLeaveGroup
                     <div className={chatImg}>
                         <img
                             alt={chatName}
-                            src={`${process.env.REACT_APP_SERVER_BASE_URL}/${avatar}`}
+                            src={`${import.meta.env.VITE_SERVER_BASE_URL}/${avatar}`}
                         />
                     </div>
 

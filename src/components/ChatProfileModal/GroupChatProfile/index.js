@@ -76,7 +76,7 @@ function GroupChatProfile({ register, control, errors, user, chat, isGroupAdmin 
                 key={user.value}
                 name={user.label}
                 lastMsgText={<span><b>Email: </b> {user.email} </span>}
-                avatarUrl={`${process.env.REACT_APP_SERVER_BASE_URL}/${user.avatar}`}
+                avatarUrl={`${import.meta.env.VITE_SERVER_BASE_URL}/${user.avatar}`}
               />
             ))}
           </div>
@@ -89,7 +89,7 @@ function GroupChatProfile({ register, control, errors, user, chat, isGroupAdmin 
                 key={user.value}
                 name={user.label}
                 lastMsgText={<span><b>Email: </b> {user.email} </span>}
-                avatarUrl={`${process.env.REACT_APP_SERVER_BASE_URL}/${user.avatar}`}
+                avatarUrl={`${import.meta.env.VITE_SERVER_BASE_URL}/${user.avatar}`}
               />
             ))}
           </div>

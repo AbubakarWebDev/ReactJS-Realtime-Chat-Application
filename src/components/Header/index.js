@@ -49,7 +49,7 @@ function Header() {
                 <img
                   alt="User Profile"
                   className={`rounded-circle border mr-2 ${avatarImg}`}
-                  src={`${process.env.REACT_APP_SERVER_BASE_URL}/${user?.avatar}`}
+                  src={`${import.meta.env.VITE_SERVER_BASE_URL}/${user?.avatar}`}
                 />
               }
             >

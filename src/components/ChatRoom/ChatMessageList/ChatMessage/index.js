@@ -28,7 +28,7 @@ function ChatMessage({ message, user }) {
       <img
         alt="Avatar"
         className={`${avatar} rounded-circle border`}
-        src={`${process.env.REACT_APP_SERVER_BASE_URL}/${message.sender.avatar}`}
+        src={`${import.meta.env.VITE_SERVER_BASE_URL}/${message.sender.avatar}`}
       />
 
       <div className={`${chatMessage} ${(message.sender._id !== user._id) ? incomingMsg : ""}`}>

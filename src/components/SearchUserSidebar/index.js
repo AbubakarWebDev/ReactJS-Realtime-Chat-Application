@@ -77,7 +77,7 @@ function SearchUserSidebar() {
                                 name={fullName}
                                 lastMsgText={email}
                                 handleClick={() => handleUserClick(user._id)}
-                                avatarUrl={`${process.env.REACT_APP_SERVER_BASE_URL}/${user.avatar}`}
+                                avatarUrl={`${import.meta.env.VITE_SERVER_BASE_URL}/${user.avatar}`}
                             />
                         );
                     }) : (

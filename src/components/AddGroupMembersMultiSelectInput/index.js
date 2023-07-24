@@ -19,7 +19,7 @@ function CustomOptionComponent(props) {
     return (
         <div className={customOptions} ref={innerRef} {...innerProps}>
             <div className={userImg}>
-                <Image src={`${process.env.REACT_APP_SERVER_BASE_URL}/${avatar}`} roundedCircle />
+                <Image src={`${import.meta.env.VITE_SERVER_BASE_URL}/${avatar}`} roundedCircle />
             </div>
 
             <div className={userDescription}>

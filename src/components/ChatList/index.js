@@ -129,7 +129,7 @@ function ChatList({ user, onlineUsers }) {
                 lastMsgTime={lastMsgTime}
                 handleClick={handleChatClick}
                 unReadCount={chat.unReadCount}
-                avatarUrl={`${process.env.REACT_APP_SERVER_BASE_URL}/${avatar}`}
+                avatarUrl={`${import.meta.env.VITE_SERVER_BASE_URL}/${avatar}`}
               />
             );
           })}

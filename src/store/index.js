@@ -15,7 +15,7 @@ const store = configureStore({
         message: messageReducer,
     },
     middleware: (getDefaultMiddleware) => [...getDefaultMiddleware()],
-    devTools: process.env.NODE_ENV !== 'production',
+    devTools: import.meta.env.DEV,
 });
 
 export { store };
