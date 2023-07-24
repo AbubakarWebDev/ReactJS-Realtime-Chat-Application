@@ -1,125 +1,24 @@
 import React from "react";
-import { Container, Row, Col, Card, Button, Form } from "react-bootstrap";
-import { useEffect, useRef, useState } from "react";
-import Alert from "react-bootstrap/Alert";
-import { useSelector, useDispatch } from "react-redux";
-import { useNavigate, Link } from "react-router-dom";
+import { Row, Col } from "react-bootstrap";
 
-import * as yup from "yup";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-
-// import RequestLoader from "./../RequestLoader";
-// import { login, authActions } from "../../store/slices/authSlice";
+import Header from "../components/Header";
+import ProfileForm from "../components/ProfileForm";
+import ProfilePictureCard from "../components/ProfilePictureCard";
 
 const ProfilePage = () => {
   return (
-    <Container className="px-4 mt-4">
-      <Row>
-        <Col xl={4}>
-          {/* Profile picture card */}
-          <Card className="mb-4 mb-xl-0">
-            <Card.Header>Profile Picture</Card.Header>
-            <Card.Body className="text-center">
-              {/* Profile picture image */}
-              <img
-                className="img-account-profile rounded-circle mb-2"
-                src="http://bootdey.com/img/Content/avatar/avatar1.png"
-                alt=""
-              />
-              {/* Profile picture help block */}
-              <div className="small font-italic text-muted mb-4">
-                JPG or PNG no larger than 5 MB
-              </div>
-              {/* Profile picture upload button */}
-              <Button variant="primary" type="button">
-                Upload new image
-              </Button>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col xl={8}>
-          {/* Account details card */}
-          <Card className="mb-4">
-            <Card.Header>Account Details</Card.Header>
-            <Card.Body>
-              <Form>
-                {/* Form Group (username) */}
-                <Form.Group className="mb-3">
-                  <Form.Label className="small mb-1" htmlFor="inputUsername">
-                    Username (how your name will appear to other users on the
-                    site)
-                  </Form.Label>
-                  <Form.Control
-                    id="inputUsername"
-                    type="text"
-                    placeholder="Enter your username"
-                    defaultValue="username"
-                  />
-                </Form.Group>
-                {/* Form Row */}
-                <Row className="gx-3 mb-3">
-                  {/* Form Group (first name) */}
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label
-                        className="small mb-1"
-                        htmlFor="inputFirstName"
-                      >
-                        First name
-                      </Form.Label>
-                      <Form.Control
-                        id="inputFirstName"
-                        type="text"
-                        placeholder="Enter your first name"
-                        defaultValue="Valerie"
-                      />
-                    </Form.Group>
-                  </Col>
-                  {/* Form Group (last name) */}
-                  <Col md={6}>
-                    <Form.Group className="mb-3">
-                      <Form.Label
-                        className="small mb-1"
-                        htmlFor="inputLastName"
-                      >
-                        Last name
-                      </Form.Label>
-                      <Form.Control
-                        id="inputLastName"
-                        type="text"
-                        placeholder="Enter your last name"
-                        defaultValue="Luna"
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
+    <>
+      <Header />
 
-                {/* Form Group (email address) */}
-                <Form.Group className="mb-3">
-                  <Form.Label
-                    className="small mb-1"
-                    htmlFor="inputEmailAddress"
-                  >
-                    Email address
-                  </Form.Label>
-                  <Form.Control
-                    id="inputEmailAddress"
-                    type="email"
-                    placeholder="Enter your email address"
-                    defaultValue="name@example.com"
-                  />
-                </Form.Group>
-                {/* Save changes button */}
-                <Button variant="primary" type="button">
-                  Save changes
-                </Button>
-              </Form>
-            </Card.Body>
-          </Card>
+      <Row className="p-4 mx-0">
+        <Col xl={4} className="ps-0">
+          <ProfilePictureCard />
+        </Col>
+        <Col xl={8} className="pe-0">
+          <ProfileForm />
         </Col>
       </Row>
-    </Container>
+    </>
   );
 };
 

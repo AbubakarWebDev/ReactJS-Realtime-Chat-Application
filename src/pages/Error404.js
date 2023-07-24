@@ -1,26 +1,31 @@
 import React from "react";
-import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
+
+import styles from "../styles/error404.module.scss";
+const { errorContainer, mars, logo404, meteor, title, subtitle, btnBlack, astronaut, spaceship } = styles;
 
 function Error404() {
+  const navigate = useNavigate();
+
   return (
-    <div className="flex h-screen items-center justify-center p-5 bg-white w-full">
-      <div className="text-center">
-        <div className="inline-flex rounded-full bg-blue-100 p-4">
-          <div className="rounded-full stroke-blue-600 bg-blue-200 p-4">
-            <HiOutlineExclamationCircle
-              className="w-16 h-16 text-blue-600"
-              fill="none"
-            />
-          </div>
-        </div>
-        <h1 className="mt-5 text-[36px] font-bold text-slate-800 lg:text-[50px]">
-          404 - Page not found
-        </h1>
-        <p className="text-slate-600 mt-5 lg:text-lg">
-          The page you are looking for doesn't exist or <br />
-          has been removed.
-        </p>
+    <div className={errorContainer}>
+      <div className={mars}></div>
+
+      <img src="https://assets.codepen.io/1538474/404.svg" className={logo404} />
+      <img src="https://assets.codepen.io/1538474/meteor.svg" className={meteor} />
+      
+      <p className={title}>Oh no!!</p>
+
+      <p className={subtitle}>
+        You’re either misspelling the URL <br /> or requesting a page that's no longer here.
+      </p>
+      
+      <div align="center">
+        <a className={btnBlack} href="#" onClick={() => navigate(-1)}>Back to Previous Page</a>
       </div>
+      
+      <img src="https://assets.codepen.io/1538474/astronaut.svg" className={astronaut} />
+      <img src="https://assets.codepen.io/1538474/spaceship.svg" className={spaceship} />
     </div>
   );
 }

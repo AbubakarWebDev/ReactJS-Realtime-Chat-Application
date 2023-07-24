@@ -28,14 +28,14 @@ function Header() {
         <div className="container-fluid">
           <button
             onClick={() => dispatch(homePageActions.setSearchUserSidebar(true))}
-            className="border-0  mb-4 p-0 bg-transparent fw-bold d-flex align-items-center "
+            className="border-0 p-0 bg-transparent fw-bold d-flex align-items-center "
           >
             <FaSearch className="me-2 " />
             <span className="fs-5">Find Friends</span>
           </button>
 
           <Link
-            className="text-decoration-none text-dark fs-4 fw-bold mb-4"
+            className="text-decoration-none text-dark fs-4 fw-bold"
             to="/"
           >
             Chat Me Up

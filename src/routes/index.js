@@ -1,5 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 
+import App from "../App";
+
 import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
@@ -7,13 +9,7 @@ import Profile from "../pages/Profile";
 import Error404 from "../pages/Error404";
 import ResetPassword from "../pages/ResetPassword";
 import ForgotPassword from "../pages/ForgotPassword";
-import VideoHome from "../pages/VideoHome";
-import Room from "../pages/Room";
-import FileHome from "../pages/FileHome";
-import MainHeader from "../components/MainHeader";
-import About from "../pages/About";
 
-import App from "../App";
 import PrivateRoutes from "../components/PrivateRoutes";
 import privateRoutesLoader from "./privateRoutesLoader";
 
@@ -51,26 +47,6 @@ const router = createBrowserRouter([
           {
             path: "/profile",
             element: <Profile />,
-          },
-          {
-            path: "/file-home",
-            element: <FileHome />,
-          },
-          {
-            path: "/video-home",
-            element: <VideoHome />,
-          },
-          {
-            path: "/room/:roomId",
-            element: <Room />,
-          },
-          {
-            path: "/main-header",
-            element: <MainHeader />,
-          },
-          {
-            path: "/about-us",
-            element: <About />,
           },
         ],
       },
