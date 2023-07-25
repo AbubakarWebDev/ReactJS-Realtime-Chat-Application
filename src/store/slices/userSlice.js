@@ -3,9 +3,9 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { authActions } from "./authSlice";
 import { handleAPIError } from '../../services/api.service';
 import {
-    userExist,
-    currentUser,
-    getAllUsers as getUsers,
+    currentUser, 
+    userExist, 
+    getAllUsers as getUsers, 
     updateUserAvatar as updateAvatar,
     updateUserProfile as updateProfile,
 } from "../../services/user.service";
@@ -55,7 +55,7 @@ const updateUserProfile = createAsyncThunk('user/updateUserProfile', async (payl
 const updateUserAvatar = createAsyncThunk('user/updateUserAvatar', async (payload, thunkAPI) => {
     try {
         thunkAPI.dispatch(userSlice.actions.setError(null));
-        
+
         const response = await updateAvatar(payload, thunkAPI.signal);
         return response.data.result.user;
     }
@@ -70,6 +70,8 @@ const initialState = {
     error: null,
     loading: false,
     isUserExist: null,
+    avatarUpdateError: null,
+    profileUpdateError: null,
 };
 
 const userSlice = createSlice({
@@ -135,32 +137,33 @@ const userSlice = createSlice({
 
             // reducers for updateUserProfile action
             .addCase(updateUserProfile.pending, (state) => {
-                state.error = null;
                 state.loading = true;
+                state.profileUpdateError = null;
             })
             .addCase(updateUserProfile.fulfilled, (state, action) => {
-                state.error = null;
                 state.loading = false;
                 state.user = action.payload;
+                state.profileUpdateError = null;
             })
             .addCase(updateUserProfile.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload;
+                state.profileUpdateError = action.payload;
             })
 
             // reducers for updateUserAvatar action
             .addCase(updateUserAvatar.pending, (state) => {
-                state.error = null;
+                state.avatarUpdateError = null;
                 state.loading = true;
             })
             .addCase(updateUserAvatar.fulfilled, (state, action) => {
-                state.error = null;
                 state.loading = false;
                 state.user = action.payload;
+                state.avatarUpdateError = null;
             })
             .addCase(updateUserAvatar.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+                state.avatarUpdateError = action.payload;
             })
 
             // reducer for logout action
@@ -173,4 +176,4 @@ const userSlice = createSlice({
 const userReducer = userSlice.reducer;
 const userActions = userSlice.actions;
 
-export { userReducer, getLoggedInUser, checkUserExist, userActions, getAllUsers, updateUserProfile, updateUserAvatar };
+export { userReducer, getLoggedInUser, checkUserExist, userActions, getAllUsers, updateUserAvatar, updateUserProfile };

@@ -57,7 +57,7 @@ function ProfileForm({ user: currentUser }) {
     const controller = useRef({ abort: () => { } });
 
     const dispatch = useDispatch();
-    const { loading, error, user } = useSelector((state) => state.user);
+    const { loading, profileUpdateError } = useSelector((state) => state.user);
 
     const [showAlert, setShowAlert] = useState(false);
     const { register, handleSubmit, formState: { errors } } = useForm({
@@ -90,9 +90,9 @@ function ProfileForm({ user: currentUser }) {
             <Card.Header>Account Details</Card.Header>
 
             <Card.Body className='position-relative'>
-                {error && <Alert variant="danger"> <b> Error: {error.message} </b> </Alert>}
+                {profileUpdateError && <Alert variant="danger"> <b> Error: {profileUpdateError.message} </b> </Alert>}
 
-                {(!error && showAlert) && (
+                {(!profileUpdateError && showAlert) && (
                     <Alert variant="warning" onClose={() => setShowAlert(false)} dismissible>
                         <b> Your Profile has been Updated Successfully. </b>
                     </Alert>

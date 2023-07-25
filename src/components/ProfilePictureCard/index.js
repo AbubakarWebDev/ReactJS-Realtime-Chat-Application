@@ -17,7 +17,7 @@ function ProfilePictureCard({ avatar }) {
     const [selectedImage, setSelectedImage] = useState(avatar);
 
     const dispatch = useDispatch();
-    const { loading, error } = useSelector((state) => state.user);
+    const { loading, avatarUpdateError } = useSelector((state) => state.user);
 
     function handleUpload(event) {
         if (event.target.files.length === 0) {
@@ -68,9 +68,9 @@ function ProfilePictureCard({ avatar }) {
             <Card.Header>Profile Picture</Card.Header>
 
             <Card.Body className="text-center position-relative">
-                {error && <Alert variant="danger"> <b> Error: {error.message} </b> </Alert>}
+                {avatarUpdateError && <Alert variant="danger"> <b> Error: {avatarUpdateError.message} </b> </Alert>}
 
-                {(!error && showAlert) && (
+                {(!avatarUpdateError && showAlert) && (
                     <Alert variant="warning" onClose={() => setShowAlert(false)} dismissible>
                         <b> Your Avatar has been Updated Successfully. </b>
                     </Alert>
