@@ -1,12 +1,23 @@
-import React, { useRef, useState } from 'react';
-import { Card, Button } from "react-bootstrap";
+import React, { useEffect, useRef, useState } from 'react';
+import { Card, Button, Alert } from "react-bootstrap";
+import { useSelector, useDispatch } from 'react-redux';
+
+import { updateUserAvatar } from '../../store/slices/userSlice';
+import RequestLoader from './../RequestLoader';
 
 import styles from "./style.module.scss";
 const { profilePic, fileInput } = styles;
 
 function ProfilePictureCard({ avatar }) {
     const fileInputRef = useRef(null);
+    const controller = useRef({ abort: () => { } });
+
+    const [file, setFile] = useState(null);
+    const [showAlert, setShowAlert] = useState(false);
     const [selectedImage, setSelectedImage] = useState(avatar);
+
+    const dispatch = useDispatch();
+    const { loading, error } = useSelector((state) => state.user);
 
     function handleUpload(event) {
         if (event.target.files.length === 0) {
@@ -23,9 +34,9 @@ function ProfilePictureCard({ avatar }) {
             return;
         }
 
-        const maxSize = 5 * 1024 * 1024; // 5 MB in bytes
+        const maxSize = 2 * 1024 * 1024; // 5 MB in bytes
         if (file.size > maxSize) {
-            alert("Please upload an image smaller than 5 MB.");
+            alert("Please upload an image smaller than 2 MB.");
             event.preventDefault();
             return;
         }
@@ -33,13 +44,38 @@ function ProfilePictureCard({ avatar }) {
         const reader = new FileReader();
         reader.onloadend = () => setSelectedImage(reader.result);
         reader.readAsDataURL(file);
+
+        setFile(file);
     }
+
+    function updateProfile() {
+        const promise = dispatch(updateUserAvatar({ avatar: file }));
+        controller.current.abort = promise.abort;
+
+        promise.unwrap().then(() => {
+            setShowAlert(true);
+        });
+    }
+
+    useEffect(() => {
+        return () => {
+            controller.current.abort();
+        }
+    }, []);
 
     return (
         <Card className="mb-4 mb-xl-0">
             <Card.Header>Profile Picture</Card.Header>
 
-            <Card.Body className="text-center">
+            <Card.Body className="text-center position-relative">
+                {error && <Alert variant="danger"> <b> Error: {error.message} </b> </Alert>}
+
+                {(!error && showAlert) && (
+                    <Alert variant="warning" onClose={() => setShowAlert(false)} dismissible>
+                        <b> Your Avatar has been Updated Successfully. </b>
+                    </Alert>
+                )}
+
                 <div className={profilePic} onClick={() => fileInputRef.current.click()}>
                     <img
                         className="rounded-circle"
@@ -55,9 +91,11 @@ function ProfilePictureCard({ avatar }) {
                     onChange={handleUpload}
                 />
 
-                <div className="small font-italic text-muted mb-3"> JPG or PNG no larger than 5 MB </div>
+                <div className="small font-italic text-muted mb-3"> JPG or PNG no larger than 2 MB </div>
 
-                <Button variant="primary" type="button"> Update Profile Avatar </Button>
+                <Button variant="primary" type="button" onClick={updateProfile}> Update Profile Avatar </Button>
+
+                {loading && <RequestLoader />}
             </Card.Body>
         </Card>
     );

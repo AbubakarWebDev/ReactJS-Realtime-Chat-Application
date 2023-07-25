@@ -161,8 +161,8 @@ function SignupForm() {
 
             <button
                 type="submit" 
-                className="btn btn-lg btn-primary w-100 text-center" 
                 disabled={loading}
+                className="btn btn-lg btn-primary w-100 text-center" 
             >
                 Create Account
             </button>

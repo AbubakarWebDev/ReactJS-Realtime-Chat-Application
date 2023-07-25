@@ -20,7 +20,7 @@ const router = createBrowserRouter([
     children: [
       {
         loader: privateRoutesLoader,
-        element: <PrivateRoutes protect={true} />,
+        element: <PrivateRoutes protect={false} />,
         children: [
           {
             path: "/login",
@@ -37,8 +37,9 @@ const router = createBrowserRouter([
         ],
       },
       {
+        id: "private",
         loader: privateRoutesLoader,
-        element: <PrivateRoutes protect={false} />,
+        element: <PrivateRoutes protect={true} />,
         children: [
           {
             path: "/",

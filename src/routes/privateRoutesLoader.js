@@ -6,11 +6,17 @@ async function PrivateRoutesLoader() {
 
     if (token) {
         try {
-            await store.dispatch(getLoggedInUser(token)).unwrap();
-            return true;
+            const user = await store.dispatch(getLoggedInUser(token)).unwrap();
+            
+            return {
+                user,
+                isUserLoggedIn: true
+            };
         }
         catch (err) {
-            return false;
+            return {
+                isUserLoggedIn: false
+            };
         }
     }
 

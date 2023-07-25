@@ -12,7 +12,7 @@ import { homePageActions } from "../../store/slices/homePageSlice";
 import styles from "./style.module.scss";
 const { avatarImg, navbar } = styles;
 
-function Header() {
+function Header({ profile }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
@@ -26,13 +26,15 @@ function Header() {
     <>
       <nav className={`navbar bg-white ${navbar}`}>
         <div className="container-fluid">
-          <button
-            onClick={() => dispatch(homePageActions.setSearchUserSidebar(true))}
-            className="border-0 p-0 bg-transparent fw-bold d-flex align-items-center "
-          >
-            <FaSearch className="me-2 " />
-            <span className="fs-5">Find Friends</span>
-          </button>
+          {!profile && (
+            <button
+              onClick={() => dispatch(homePageActions.setSearchUserSidebar(true))}
+              className="border-0 p-0 bg-transparent fw-bold d-flex align-items-center "
+            >
+              <FaSearch className="me-2 " />
+              <span className="fs-5">Find Friends</span>
+            </button>
+          )}
 
           <Link
             className="text-decoration-none text-dark fs-4 fw-bold"
