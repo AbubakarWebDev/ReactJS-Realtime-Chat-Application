@@ -1,6 +1,6 @@
-# Node Express TypeScript Blog Management System
+# ReactJS RealTime Chat Application
 
-This repository features a blog management system built with Node.js, Express, and TypeScript, with a strong emphasis on leveraging object-oriented programming (OOP) principles throughout the project. we create a scalable and structured system for data retrieval and interaction. This setup ensures a seamless flow of information between the client and server.
+This repository showcases a real-time chat application, resembling a WhatsApp clone, with features like one-to-one and group chat functionality. The application's architecture is built using Vite, React, TypeScript, Socket.IO, authentication, and more.
 
 ## Getting Started
 
